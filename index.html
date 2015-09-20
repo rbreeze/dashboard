@@ -25,17 +25,16 @@
 		<canvas id="carbs" class="canvas"></canvas>
 	</div>
 
-	<script src="//cdn.rawgit.com/jpillora/xdomain/0.7.3/dist/xdomain.min.js" slave="https://googledrive.com/host/0B9dtzY00H96XcnNoU0tjUXg0TmM"></script>
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="jquery-csv.min.js"></script>
 	<script src="Chart.min.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
     	var data; 
-    	var mileageUrl = 'https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=1976666145&single=true&output=csv';
-    	var paceUrl = 'https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=726503565&single=true&output=csv';
-    	var sleepUrl = 'https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=1876466725&single=true&output=csv';
-    	var nutrientsUrl = 'https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=740053867&single=true&output=csv';
+    	var mileageUrl = 'http://cors.io/?u=https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=1976666145&single=true&output=csv';
+    	var paceUrl = 'http://cors.io/?u=https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=726503565&single=true&output=csv';
+    	var sleepUrl = 'http://cors.io/?u=https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=1876466725&single=true&output=csv';
+    	var nutrientsUrl = 'http://cors.io/?u=https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=740053867&single=true&output=csv';
 
     	var dates = new Array();
     	var miles = new Array();
