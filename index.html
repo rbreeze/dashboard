@@ -31,10 +31,14 @@
     <script type="text/javascript">
     $(document).ready(function() {
     	var data; 
-    	var mileageUrl = 'http://cors.io/?u=https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=1976666145&single=true&output=csv';
-    	var paceUrl = 'http://cors.io/?u=https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=726503565&single=true&output=csv';
-    	var sleepUrl = 'http://cors.io/?u=https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=1876466725&single=true&output=csv';
-    	var nutrientsUrl = 'http://cors.io/?u=https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=740053867&single=true&output=csv';
+    	var urlStem = "https://spreadsheets.google.com/tq?key=";
+   		var query = "&tqx=out:csv"
+    	var mileageUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Mileage'
+    	var paceUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Paces';
+    	var sleepUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Sleep';
+    	var nutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Macronutrients';
+
+    	console.log(mileageUrl);
 
     	var dates = new Array();
     	var miles = new Array();
@@ -46,8 +50,11 @@
     	week = 0;
 
     	function getDataSet(url, labels, values, valueColumn) {
+    		
     		$.ajax({
 	        	url: url, 
+	        	dataType: "text/csv",
+	        	headers: { "Origin" : "http://rbreeze.github.io" },
 	        	success: function(data) {
 		        	var arrays = $.csv.toArrays(data);
 			        $.each(arrays, function(index, value) {
