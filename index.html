@@ -12,7 +12,7 @@
 
 	<div class="mileage container">
 		<h1>Mileage- <span class="whichWeek">This Week</span></h1>
-		<canvas id="miles" class="canvas"></canvas>
+		<canvas id="mileage" class="canvas"></canvas>
 	</div>
 
 	<div class="sleep container">
@@ -32,42 +32,68 @@
     $(document).ready(function() {
     	var data; 
     	var urlStem = "https://spreadsheets.google.com/tq?key=";
-   		var query = "&tqx=out:csv"
+   		var query = "&tqx=out:csv&callback=processData"
     	var mileageUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Mileage'
     	var paceUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Paces';
     	var sleepUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Sleep';
     	var nutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Macronutrients';
 
-    	console.log(mileageUrl);
-
-    	var dates = new Array();
-    	var miles = new Array();
-    	var paces = new Array();
-    	var sleep = new Array();
-    	var carbs = new Array();
-    	var sugar = new Array();
-
     	week = 0;
 
-    	function getDataSet(url, labels, values, valueColumn) {
-    		
+    	function processData(data) {
+    		alert(data);
+    	}
+
+    	function getAndGraphDataSet(url, valueColumn, name, chartType, options, week, number) {
+    		var values = new Array();
+    		var labels = new Array();
+
     		$.ajax({
-	        	url: url, 
-	        	dataType: "text/csv",
-	        	// headers: { "Origin" : "http://rbreeze.github.io" },
+	        	url: 'http://query.yahooapis.com/v1/public/yql', 
+	        	dataType: "jsonp",
+	        	data: { 
+		            q: "select * from csv where url='" + url + "'",
+		            format: 'json'
+          		},
 	        	success: function(data) {
-		        	var arrays = $.csv.toArrays(data);
-			        $.each(arrays, function(index, value) {
-			        	//This assumes there is a title row. If not, delete the if statement and delete the "-1"'s
-			        	if(index !== "0") {
-				    		values[index-1] = parseFloat(value[valueColumn]);
-				    		if(labels) {
-				    			labels[index-1] = value[0];
-				    		}
-				    	}
-			    	});
+		        	$.each(data.query.results.row, function(index, object) {
+		        		if(index !== "0") { 
+		        			values[index-1] = parseFloat(data.query.results.row[index].col1);
+		        			labels[index-1] = data.query.results.row[index].col0;
+		        		}
+		        	});
+
+		        	var uiFont = 'Open Sans';
+			    	var chartDefaults = {
+			    		scaleFontFamily: uiFont,
+			    		tooltipFontFamily: uiFont,
+						pointLabelFontFamily: uiFont,
+					  	tooltipTitleFontStyle : 'normal'
+			    	}
+
+			    	var weeklyData = getWeek(values, week);
+			    	var thisWeeksLabels = getWeek(labels, week);
+
+					var chartData = {
+				        labels: thisWeeksLabels,
+				        datasets: [
+			        		{
+			        			label: name,
+			            		fillColor : "rgba(234,120,123,0.4)",
+			            		strokeColor : "rgba(175,0,3,1.0)",
+			            		pointColor : "#fff",
+			            		pointStrokeColor : "rgba(139,0,5,1.0)",
+			        			data: weeklyData
+			        		}
+				        ]
+				    }
+
+				   	var ctx = document.getElementById(name).getContext("2d");
+			    	var myChart = new Chart(ctx);
+			    	myChart.Line(chartData, chartDefaults);
+
 	        	},
-	        	async: false
+	        	error: function() { console.log("Error! Failed to get data set."); }
         	});
     	}
 
@@ -86,11 +112,9 @@
     		clearCanvas('sleep');
     		clearCanvas('carbs');
 
-	    	getDataSet(mileageUrl, dates, miles, 1);
-	    	getDataSet(paceUrl, null, paces, 1);
-	    	getDataSet(sleepUrl, null, sleep, 1);
-	    	getDataSet(nutrientsUrl, null, carbs, 1);
-	    	getDataSet(nutrientsUrl, null, sugar, 2);
+	    	getAndGraphDataSet(mileageUrl, 1, "mileage", "Line", null, week);
+			getAndGraphDataSet(sleepUrl, 1, "sleep", "Line", null, week);
+			getAndGraphDataSet(nutrientsUrl, 1, "carbs", "Line", null, week);
 
 			if (week <= 0) {
 				$('.forward').hide();
@@ -105,104 +129,6 @@
 			} else {
 				$('.whichWeek').html(week + ' Weeks Ago');
 			}
-
-			if (week >= (dates.length / 7)) {
-				$('.back').hide();
-			} else {
-				$('.back').show();
-			}
-
-	    	var thisWeekDates = getWeek(dates, week);
-
-	    	var weeklyMiles = getWeek(miles, week);
-	    	var weeklySleep = getWeek(sleep, week);
-	    	var weeklyCarbs = getWeek(carbs, week);
-	    	var weeklySugar = getWeek(sugar, week);
-
-			var mileageData = {
-		        labels: thisWeekDates,
-		        datasets: [
-	        		{
-	        			label: "Mileage",
-	            		fillColor : "rgba(234,120,123,0.4)",
-	            		strokeColor : "rgba(175,0,3,1.0)",
-	            		pointColor : "#fff",
-	            		pointDotStrokeWidth: 5,
-	            		pointDotRadius: 100,
-	            		pointStrokeColor : "rgba(139,0,5,1.0)",
-	        			data: weeklyMiles
-	        		},
-	        		{
-	        			label: "Paces",
-	        			fillColor : "rgba(234,120,123,0.4)",
-	            		strokeColor : "rgba(175,0,3,1.0)",
-	            		pointDotStrokeWidth: '5',
-	            		pointColor : "#fff",
-	            		pointStrokeColor : "rgba(139,0,5,1.0)",
-	            		data: paces
-	        		}
-		        ]
-		    }
-
-			var sleepData = {
-		        labels: thisWeekDates,
-		        datasets: [
-	        		{
-	        			label: "Sleep",
-	            		fillColor : "rgba(101,146,230,0.4)",
-	            		strokeColor : "rgba(9,82,193,1.0)",
-	            		pointColor : "#fff",
-	            		pointStrokeColor : "rgba(10,48,143,1.0)",
-	        			data: weeklySleep
-	        		}
-		        ]
-		    }
-
-			var carbData = {
-		        labels: thisWeekDates,
-		        datasets: [
-	        		{
-	        			label: "Carbs",
-	            		fillColor : "rgba(101,146,230,0.4)",
-	            		strokeColor : "rgba(9,82,193,1.0)",
-	            		pointColor : "#fff",
-	            		pointStrokeColor : "rgba(10,48,143,1.0)",
-	        			data: weeklyCarbs
-	        		},
-	        		{
-	        			label: "Sugar",
-	            		fillColor : "rgba(101,146,230,0.4)",
-	            		strokeColor : "rgba(9,82,193,1.0)",
-	            		pointColor : "#fff",
-	            		pointStrokeColor : "rgba(10,48,143,1.0)",
-	        			data: weeklySugar	
-	        		}
-		        ]
-		    }
-
-		    var mileageCtx = document.getElementById("miles").getContext("2d");
-
-			var sleepCtx = document.getElementById("sleep").getContext("2d");
-
-			var nutrientCtx = document.getElementById("carbs").getContext("2d");
-
-			var uiFont = 'Open Sans';
-
-	    	var chartDefaults = {
-	    		scaleFontFamily: uiFont,
-	    		tooltipFontFamily: uiFont,
-				pointLabelFontFamily: uiFont,
-			  	tooltipTitleFontStyle : 'normal'
-	    	}
-
-			var Mileage = new Chart(mileageCtx);
-			Mileage.Line(mileageData, chartDefaults);
-			
-			var Sleep = new Chart(sleepCtx);
-			Sleep.Line(sleepData, chartDefaults);
-
-			var Carbs = new Chart(nutrientCtx); 
-			Carbs.Line(carbData, chartDefaults);
     	}
 
     	updateGraphs();
