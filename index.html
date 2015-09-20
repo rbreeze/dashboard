@@ -54,7 +54,7 @@
     		$.ajax({
 	        	url: url, 
 	        	dataType: "text/csv",
-	        	headers: { "Origin" : "http://rbreeze.github.io" },
+	        	// headers: { "Origin" : "http://rbreeze.github.io" },
 	        	success: function(data) {
 		        	var arrays = $.csv.toArrays(data);
 			        $.each(arrays, function(index, value) {
