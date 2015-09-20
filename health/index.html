@@ -1,0 +1,218 @@
+<html>
+<head>
+<link rel="stylesheet" href="style.css" type="text/css">
+</head>
+
+<body>
+
+	<div class="navigation">
+		<a class="back button">Back</a>
+		<a class="forward button">Forward</a>
+	</div>
+
+	<div class="mileage container">
+		<h1>Mileage- <span class="whichWeek">This Week</span></h1>
+		<canvas id="miles" class="canvas"></canvas>
+	</div>
+
+	<div class="sleep container">
+		<h1>Sleep- <span class="whichWeek">This Week</span></h1>
+		<canvas id="sleep" class="canvas"></canvas>
+	</div>
+
+	<div class="carbs container">
+		<h1>Carbs &amp; Sugar- <span class="whichWeek">This Week</span></h1>
+		<canvas id="carbs" class="canvas"></canvas>
+	</div>
+
+	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
+	<script src="jquery-csv.min.js"></script>
+	<script src="Chart.min.js"></script>
+    <script type="text/javascript">
+    $(document).ready(function() {
+    	var data; 
+    	var mileageUrl = 'https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=1976666145&single=true&output=csv';
+    	var paceUrl = 'https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=726503565&single=true&output=csv';
+    	var sleepUrl = 'https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=1876466725&single=true&output=csv';
+    	var nutrientsUrl = 'https://docs.google.com/spreadsheets/d/1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc/pub?gid=740053867&single=true&output=csv';
+
+    	var dates = new Array();
+    	var miles = new Array();
+    	var paces = new Array();
+    	var sleep = new Array();
+    	var carbs = new Array();
+    	var sugar = new Array();
+
+    	week = 0;
+
+    	function getDataSet(url, labels, values, valueColumn) {
+    		$.ajax({
+	        	url: url, 
+	        	success: function(data) {
+		        	var arrays = $.csv.toArrays(data);
+			        $.each(arrays, function(index, value) {
+			        	//This assumes there is a title row. If not, delete the if statement and delete the "-1"'s
+			        	if(index !== "0") {
+				    		values[index-1] = parseFloat(value[valueColumn]);
+				    		if(labels) {
+				    			labels[index-1] = value[0];
+				    		}
+				    	}
+			    	});
+	        	},
+	        	async: false
+        	});
+    	}
+
+    	function getWeek(data, weeksAgo) {
+    		return data.reverse().slice((7*weeksAgo), ((7*weeksAgo)+7)).reverse();
+    	}
+
+    	function clearCanvas(name) {
+    		var html = $('.' + name).html();
+			$('.' + name).html("");
+			$('.' + name).html(html);	
+    	}
+
+    	function updateGraphs() {
+    		clearCanvas('mileage');
+    		clearCanvas('sleep');
+    		clearCanvas('carbs');
+
+	    	getDataSet(mileageUrl, dates, miles, 1);
+	    	getDataSet(paceUrl, null, paces, 1);
+	    	getDataSet(sleepUrl, null, sleep, 1);
+	    	getDataSet(nutrientsUrl, null, carbs, 1);
+	    	getDataSet(nutrientsUrl, null, sugar, 2);
+
+			if (week <= 0) {
+				$('.forward').hide();
+			} else {
+				$('.forward').show();
+			}
+
+			if (week == 0) {
+				$('.whichWeek').html('This Week');
+			} else if (week == 1) {
+				$('.whichWeek').html('Last Week');
+			} else {
+				$('.whichWeek').html(week + ' Weeks Ago');
+			}
+
+			if (week >= (dates.length / 7)) {
+				$('.back').hide();
+			} else {
+				$('.back').show();
+			}
+
+	    	var thisWeekDates = getWeek(dates, week);
+
+	    	var weeklyMiles = getWeek(miles, week);
+	    	var weeklySleep = getWeek(sleep, week);
+	    	var weeklyCarbs = getWeek(carbs, week);
+	    	var weeklySugar = getWeek(sugar, week);
+
+			var mileageData = {
+		        labels: thisWeekDates,
+		        datasets: [
+	        		{
+	        			label: "Mileage",
+	            		fillColor : "rgba(234,120,123,0.4)",
+	            		strokeColor : "rgba(175,0,3,1.0)",
+	            		pointColor : "#fff",
+	            		pointDotStrokeWidth: 5,
+	            		pointDotRadius: 100,
+	            		pointStrokeColor : "rgba(139,0,5,1.0)",
+	        			data: weeklyMiles
+	        		},
+	        		{
+	        			label: "Paces",
+	        			fillColor : "rgba(234,120,123,0.4)",
+	            		strokeColor : "rgba(175,0,3,1.0)",
+	            		pointDotStrokeWidth: '5',
+	            		pointColor : "#fff",
+	            		pointStrokeColor : "rgba(139,0,5,1.0)",
+	            		data: paces
+	        		}
+		        ]
+		    }
+
+			var sleepData = {
+		        labels: thisWeekDates,
+		        datasets: [
+	        		{
+	        			label: "Sleep",
+	            		fillColor : "rgba(101,146,230,0.4)",
+	            		strokeColor : "rgba(9,82,193,1.0)",
+	            		pointColor : "#fff",
+	            		pointStrokeColor : "rgba(10,48,143,1.0)",
+	        			data: weeklySleep
+	        		}
+		        ]
+		    }
+
+			var carbData = {
+		        labels: thisWeekDates,
+		        datasets: [
+	        		{
+	        			label: "Carbs",
+	            		fillColor : "rgba(101,146,230,0.4)",
+	            		strokeColor : "rgba(9,82,193,1.0)",
+	            		pointColor : "#fff",
+	            		pointStrokeColor : "rgba(10,48,143,1.0)",
+	        			data: weeklyCarbs
+	        		},
+	        		{
+	        			label: "Sugar",
+	            		fillColor : "rgba(101,146,230,0.4)",
+	            		strokeColor : "rgba(9,82,193,1.0)",
+	            		pointColor : "#fff",
+	            		pointStrokeColor : "rgba(10,48,143,1.0)",
+	        			data: weeklySugar	
+	        		}
+		        ]
+		    }
+
+		    var mileageCtx = document.getElementById("miles").getContext("2d");
+
+			var sleepCtx = document.getElementById("sleep").getContext("2d");
+
+			var nutrientCtx = document.getElementById("carbs").getContext("2d");
+
+			var uiFont = 'Open Sans';
+
+	    	var chartDefaults = {
+	    		scaleFontFamily: uiFont,
+	    		tooltipFontFamily: uiFont,
+				pointLabelFontFamily: uiFont,
+			  	tooltipTitleFontStyle : 'normal'
+	    	}
+
+			var Mileage = new Chart(mileageCtx);
+			Mileage.Line(mileageData, chartDefaults);
+			
+			var Sleep = new Chart(sleepCtx);
+			Sleep.Line(sleepData, chartDefaults);
+
+			var Carbs = new Chart(nutrientCtx); 
+			Carbs.Line(carbData, chartDefaults);
+    	}
+
+    	updateGraphs();
+        
+		$('.back').click(function() {
+			week += 1; 
+			console.log(week);
+			updateGraphs();
+		});
+		$('.forward').click(function() {
+			week -= 1; 
+			console.log(week);
+			updateGraphs();
+		});
+
+	});  
+    </script>
+</body>
+</html>
+

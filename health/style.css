@@ -1,0 +1,33 @@
+h1, a {
+	font-family: 'Open Sans';
+	font-weight: 300;
+	color: #4C4C4C;
+}
+
+h1 {
+	text-align: center;
+	padding-top: 20px;
+}
+
+.navigation {
+	margin-top: 20px;
+}
+
+a.button {
+	border: 1px solid #BBBBBB;	
+	padding: 5px;
+	margin: 5px;
+}
+
+.container {
+	width: 500px;
+	padding: 15px;
+	padding-top: 0px;
+	margin: 20px;
+	box-shadow: 0px 1px 5px 0px rgba(32,32,32,0.3);
+}
+
+.canvas {
+	width: 500px;
+	height: 300px;
+}
