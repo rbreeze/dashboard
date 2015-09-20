@@ -3,12 +3,17 @@
 	font-family: 'Open Sans';
 }
 
+@font-face {
+	src: url('opensansLight.ttf');
+	font-family: 'Open Sans Light';
+}
+
 html {
 	background: #454545;
 }
 
 h1, a {
-	font-family: 'Open Sans';
+	font-family: 'Open Sans Light';
 	font-weight: 300;
 	color: #4C4C4C;
 }

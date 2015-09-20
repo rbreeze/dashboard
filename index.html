@@ -44,7 +44,7 @@
     		alert(data);
     	}
 
-    	function getAndGraphDataSet(url, valueColumn, name, chartType, options, week, number) {
+    	function getAndGraphDataSet(url, valueColumn, name, chartType, options, week, color) {
     		var values = new Array();
     		var labels = new Array();
 
@@ -74,19 +74,74 @@
 			    	var weeklyData = getWeek(values, week);
 			    	var thisWeeksLabels = getWeek(labels, week);
 
-					var chartData = {
-				        labels: thisWeeksLabels,
-				        datasets: [
-			        		{
-			        			label: name,
-			            		fillColor : "rgba(234,120,123,0.4)",
-			            		strokeColor : "rgba(175,0,3,1.0)",
-			            		pointColor : "#fff",
-			            		pointStrokeColor : "rgba(139,0,5,1.0)",
-			        			data: weeklyData
-			        		}
-				        ]
-				    }
+			       	switch(color) {
+			       		case "red": 
+				       		var chartData = {
+						        labels: thisWeeksLabels,
+						        datasets: [{
+						        	label: name,
+				            		fillColor : "rgba(234,120,123,0.4)",
+				            		strokeColor : "rgba(175,0,3,1.0)",
+				            		pointColor : "#fff",
+				            		pointStrokeColor : "rgba(139,0,5,1.0)",
+				        			data: weeklyData
+				        		}]
+				    		}
+				    		break;
+				    	case "orange": 
+				       		var chartData = {
+						        labels: thisWeeksLabels,
+								datasets: [{
+						        	label: name,
+				            		fillColor : "rgba(228,136,76,0.4)",
+				            		strokeColor : "rgba(182,71,4,1.0)",
+				            		pointColor : "#fff",
+				            		pointStrokeColor : "rgba(182,71,4,1.0)",
+				        			data: weeklyData
+				        		}]				    		
+				        	}
+				        	break;
+				    	case "green": 
+				       		var chartData = {
+						        labels: thisWeeksLabels,
+								datasets: [{
+						        	label: name,
+				            		fillColor : "rgba(105,235,124,0.4)",
+				            		strokeColor : "rgba(19,145,12,1.0)",
+				            		pointColor : "#fff",
+				            		pointStrokeColor : "rgba(19,145,12,1.0)",
+				        			data: weeklyData
+				        		}]				    		
+				        	}
+				        	break;
+				    	case "blue": 
+				       		var chartData = {
+						        labels: thisWeeksLabels,
+								datasets: [{
+						        	label: name,
+				            		fillColor : "rgba(70,127,230,0.4)",
+				            		strokeColor : "rgba(7,66,146,1.0)",
+				            		pointColor : "#fff",
+				            		pointStrokeColor : "rgba(7,66,146,1.0)",
+				        			data: weeklyData
+				        		}]				    		
+				        	}
+				        	break;
+				        default: 
+				        	var chartData = {
+						        labels: thisWeeksLabels,
+						        datasets: [{
+						        	label: name,
+				            		fillColor : "rgba(234,120,123,0.4)",
+				            		strokeColor : "rgba(175,0,3,1.0)",
+				            		pointColor : "#fff",
+				            		pointStrokeColor : "rgba(139,0,5,1.0)",
+				        			data: weeklyData
+				        		}]
+				    		}
+				    		break;
+
+			       	}
 
 				   	var ctx = document.getElementById(name).getContext("2d");
 			    	var myChart = new Chart(ctx);
@@ -112,9 +167,9 @@
     		clearCanvas('sleep');
     		clearCanvas('carbs');
 
-	    	getAndGraphDataSet(mileageUrl, 1, "mileage", "Line", null, week);
-			getAndGraphDataSet(sleepUrl, 1, "sleep", "Line", null, week);
-			getAndGraphDataSet(nutrientsUrl, 1, "carbs", "Line", null, week);
+	    	getAndGraphDataSet(mileageUrl, 1, "mileage", "Line", null, week, "red");
+			getAndGraphDataSet(sleepUrl, 1, "sleep", "Line", null, week, "orange");
+			getAndGraphDataSet(nutrientsUrl, 1, "carbs", "Line", null, week, "green");
 
 			if (week <= 0) {
 				$('.forward').hide();
