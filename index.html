@@ -25,6 +25,21 @@
 		<canvas id="carbs" class="canvas"></canvas>
 	</div>
 
+	<div class="protein container">
+		<h1>Protein- <span class="whichWeek">This Week</span></h1>
+		<canvas id="protein" class="canvas"></canvas>
+	</div>
+
+	<div class="calories container">
+		<h1>Calories- <span class="whichWeek">This Week</span></h1>
+		<canvas id="calories" class="canvas"></canvas>
+	</div>
+
+	<div class="avgMacronutrients container">
+		<h1>Micronutrient Breakdown- <span class="whichWeek">This Week</span></h1>
+		<canvas id="avgMacronutrients" class="canvas"></canvas>
+	</div>
+
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="jquery-csv.min.js"></script>
 	<script src="Chart.min.js"></script>
@@ -39,14 +54,23 @@
     	var paceUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Paces';
     	var sleepUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Sleep';
     	var nutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Macronutrients';
+    	var avgNutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=avgMacronutrients';
 
     	var week = 0;
 
-    	function newChart(url, url2, valueColumn, name, chartType, options, week, color, valueColumn2) {
+    	var uiFont = 'Open Sans';
+    	var chartDefaults = {
+    		scaleFontFamily: uiFont,
+    		tooltipFontFamily: uiFont,
+			pointLabelFontFamily: uiFont,
+		  	tooltipTitleFontStyle : 'normal'
+    	}
+
+    	function newLine(url, url2, valueColumn, name, week, color, valueColumn2) {
     		var values = new Array();
     		var labels = new Array();
 
-    		clearCanvas(name);
+    		clearCanvas(name, "line");
 
     		$.ajax({
 	        	url: 'http://query.yahooapis.com/v1/public/yql', 
@@ -58,33 +82,14 @@
 	        	success: function(data) {
 		    		$.each(data.query.results.row, function(index, object) {
 		        		if(index !== "0") {
-		        			switch (valueColumn) {
-		        				case 1: 
-				        			values[index-1] = parseFloat(data.query.results.row[index].col1);
-				        			break;
-				        		case 2: 
-				        			values[index-1] = parseFloat(data.query.results.row[index].col2);
-				        			break;
-				        		default: 
-				        			values[index-1] = parseFloat(data.query.results.row[index].col1);
-				        			break;
-		        			}
-		        			labels[index-1] = data.query.results.row[index].col0;
-		        		}
+		        			values[index-1] = eval("parseFloat(data.query.results.row[index].col" + valueColumn + ")");
+	        			}
+	        			labels[index-1] = data.query.results.row[index].col0;
 				    });
 
-		        	var uiFont = 'Open Sans';
-			    	var chartDefaults = {
-			    		scaleFontFamily: uiFont,
-			    		tooltipFontFamily: uiFont,
-						pointLabelFontFamily: uiFont,
-					  	tooltipTitleFontStyle : 'normal'
-			    	}
-
-			    	var weeklyData = getWeek(values, week);
-			    	var thisWeeksLabels = getWeek(labels, week);
-
-			       	var chartData = convertToChartData(color, name, thisWeeksLabels, weeklyData, null);
+					var weeklyData = getWeek(values, week);
+	    			var thisWeeksLabels = getWeek(labels, week);
+	    			var chartData = convertToLineData(color, name, thisWeeksLabels, weeklyData, null);
 
 			       	if (url2) {
 			       		if (!valueColumn2)
@@ -100,23 +105,13 @@
 			          		success: function(data) {
 			          			$.each(data.query.results.row, function(index, object) {
 					        		if(index !== "0") { 
-					        			switch (valueColumn2) {
-					        				case 1: 
-							        			values2[index-1] = parseFloat(data.query.results.row[index].col1);
-							        			break;
-							        		case 2: 
-							        			values2[index-1] = parseFloat(data.query.results.row[index].col2);
-							        			break;
-							        		default: 
-							        			values2[index-1] = parseFloat(data.query.results.row[index].col1);
-							        			break;
-					        			}
+					        			values2[index-1] = eval("parseFloat(data.query.results.row[index].col" + valueColumn2 + ")");
 					        		}
 							    });
 
 							    var weeklyData2 = getWeek(values2, week);
 
-							    var chartData2 = convertToChartData(color, name, thisWeeksLabels, weeklyData2);
+							    var chartData2 = convertToLineData(color, name, thisWeeksLabels, weeklyData2);
 
 							    chartData2.datasets[0].data = values2;
 							    chartData2 = chartData2.datasets[0];
@@ -133,26 +128,65 @@
 
 				   	var ctx = document.getElementById(name).getContext("2d");
 			    	var myChart = new Chart(ctx);
-			    	myChart.Line(chartData, chartDefaults);
-
+	    			myChart.Line(chartData, chartDefaults);
 	        	},
 	        	error: function() { console.log("Error! Failed to get data set."); }
         	});
     	}
 
+    	function newDoughnut(url, valueColumn1, valueColumn2, valueColumn3, name, week, label1, label2, label3) {
+    		var values1 = new Array();
+    		var values2 = new Array();
+    		var values3 = new Array();
+    		var value1, value2, value3;
+			clearCanvas(name, "doughnut");
+
+	    	$.ajax({
+	        	url: 'http://query.yahooapis.com/v1/public/yql', 
+	        	dataType: "jsonp",
+	        	data: { 
+		            q: "select * from csv where url='" + url + "'",
+		            format: 'json'
+          		},
+          		success: function(data) {
+					$.each(data.query.results.row, function(index, object) {
+						if(index !== "0") {
+							values1[index-1] = eval("parseFloat(data.query.results.row[index].col" + valueColumn1 + ")");
+							values2[index-1] = eval("parseFloat(data.query.results.row[index].col" + valueColumn2 + ")");
+							values3[index-1] = eval("parseFloat(data.query.results.row[index].col" + valueColumn3 + ")");
+						}
+					});
+					value1 = values1.reverse()[week];
+					value2 = values2.reverse()[week];
+					value3 = values3.reverse()[week];
+					var chartData = convertToDoughnutData(value1, value2, value3, label1, label2, label3);
+					var ctx = document.getElementById(name).getContext("2d");
+			    	var myChart = new Chart(ctx);
+			    	var chartOptions = {
+			    		segmentShowStroke: false,
+			    		percentageInnerCutout: 60
+			    	}
+	    			myChart.Doughnut(chartData, $.extend(chartDefaults, chartOptions));
+          		}
+	    	});
+	    }
+
     	function getWeek(data, weeksAgo) {
     		return data.reverse().slice((7*weeksAgo), ((7*weeksAgo)+7)).reverse();
     	}
 
-    	function clearCanvas(name) {
-			$('#' + name).replaceWith('<canvas id="'+name+'" class="canvas"></canvas>');
+    	function clearCanvas(name, chartType) {
+			$('#' + name).replaceWith('<canvas id="'+name+'" class="canvas '+chartType+'"></canvas>');
     	}
 
     	function updateGraphs() {
 
-	    	newChart(mileageUrl, paceUrl, 1, "mileage", "Line", null, week, "red");
-			newChart(sleepUrl, null, 1, "sleep", "Line", null, week, "orange");
-			newChart(nutrientsUrl, nutrientsUrl, 1, "carbs", "Line", null, week, "green", 2);
+	    	newLine(mileageUrl, paceUrl, 1, "mileage", week, "red");
+			newLine(sleepUrl, null, 1, "sleep", week, "orange");
+			newLine(nutrientsUrl, nutrientsUrl, 1, "carbs", week, "green", 2);
+			newLine(nutrientsUrl, null, 3, "protein", week, "blue");
+			newLine(nutrientsUrl, null, 6, "calories", week, "purple");
+			newDoughnut(avgNutrientsUrl, 1, 3, 4, "avgMacronutrients", week, "Carbs", "Protein", "Fat");
 
 			if (week <= 0) {
 				$('.forward').hide();

@@ -44,6 +44,11 @@ a.button {
 	box-shadow: 0px 2px 5px 0px rgba(32,32,32,0.6);
 }
 
+.doughnut {
+	height: 230px !important;
+	margin-bottom: 27px;
+}
+
 @media screen and (max-width: 830px) {
 	.container {
 		display: block;
