@@ -28,9 +28,11 @@
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="jquery-csv.min.js"></script>
 	<script src="Chart.min.js"></script>
+	<script src="chartData.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
-    	var data; 
+
+    	//establish some variables    	
     	var urlStem = "https://spreadsheets.google.com/tq?key=";
    		var query = "&tqx=out:csv&callback=processData"
     	var mileageUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Mileage'
@@ -38,15 +40,13 @@
     	var sleepUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Sleep';
     	var nutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Macronutrients';
 
-    	week = 0;
+    	var week = 0;
 
-    	function processData(data) {
-    		alert(data);
-    	}
-
-    	function getAndGraphDataSet(url, valueColumn, name, chartType, options, week, color) {
+    	function newChart(url, url2, valueColumn, name, chartType, options, week, color, valueColumn2) {
     		var values = new Array();
     		var labels = new Array();
+
+    		clearCanvas(name);
 
     		$.ajax({
 	        	url: 'http://query.yahooapis.com/v1/public/yql', 
@@ -56,12 +56,22 @@
 		            format: 'json'
           		},
 	        	success: function(data) {
-		        	$.each(data.query.results.row, function(index, object) {
-		        		if(index !== "0") { 
-		        			values[index-1] = parseFloat(data.query.results.row[index].col1);
+		    		$.each(data.query.results.row, function(index, object) {
+		        		if(index !== "0") {
+		        			switch (valueColumn) {
+		        				case 1: 
+				        			values[index-1] = parseFloat(data.query.results.row[index].col1);
+				        			break;
+				        		case 2: 
+				        			values[index-1] = parseFloat(data.query.results.row[index].col2);
+				        			break;
+				        		default: 
+				        			values[index-1] = parseFloat(data.query.results.row[index].col1);
+				        			break;
+		        			}
 		        			labels[index-1] = data.query.results.row[index].col0;
 		        		}
-		        	});
+				    });
 
 		        	var uiFont = 'Open Sans';
 			    	var chartDefaults = {
@@ -74,74 +84,52 @@
 			    	var weeklyData = getWeek(values, week);
 			    	var thisWeeksLabels = getWeek(labels, week);
 
-			       	switch(color) {
-			       		case "red": 
-				       		var chartData = {
-						        labels: thisWeeksLabels,
-						        datasets: [{
-						        	label: name,
-				            		fillColor : "rgba(234,120,123,0.4)",
-				            		strokeColor : "rgba(175,0,3,1.0)",
-				            		pointColor : "#fff",
-				            		pointStrokeColor : "rgba(139,0,5,1.0)",
-				        			data: weeklyData
-				        		}]
-				    		}
-				    		break;
-				    	case "orange": 
-				       		var chartData = {
-						        labels: thisWeeksLabels,
-								datasets: [{
-						        	label: name,
-				            		fillColor : "rgba(228,136,76,0.4)",
-				            		strokeColor : "rgba(182,71,4,1.0)",
-				            		pointColor : "#fff",
-				            		pointStrokeColor : "rgba(182,71,4,1.0)",
-				        			data: weeklyData
-				        		}]				    		
-				        	}
-				        	break;
-				    	case "green": 
-				       		var chartData = {
-						        labels: thisWeeksLabels,
-								datasets: [{
-						        	label: name,
-				            		fillColor : "rgba(105,235,124,0.4)",
-				            		strokeColor : "rgba(19,145,12,1.0)",
-				            		pointColor : "#fff",
-				            		pointStrokeColor : "rgba(19,145,12,1.0)",
-				        			data: weeklyData
-				        		}]				    		
-				        	}
-				        	break;
-				    	case "blue": 
-				       		var chartData = {
-						        labels: thisWeeksLabels,
-								datasets: [{
-						        	label: name,
-				            		fillColor : "rgba(70,127,230,0.4)",
-				            		strokeColor : "rgba(7,66,146,1.0)",
-				            		pointColor : "#fff",
-				            		pointStrokeColor : "rgba(7,66,146,1.0)",
-				        			data: weeklyData
-				        		}]				    		
-				        	}
-				        	break;
-				        default: 
-				        	var chartData = {
-						        labels: thisWeeksLabels,
-						        datasets: [{
-						        	label: name,
-				            		fillColor : "rgba(234,120,123,0.4)",
-				            		strokeColor : "rgba(175,0,3,1.0)",
-				            		pointColor : "#fff",
-				            		pointStrokeColor : "rgba(139,0,5,1.0)",
-				        			data: weeklyData
-				        		}]
-				    		}
-				    		break;
+			       	var chartData = convertToChartData(color, name, thisWeeksLabels, weeklyData, null);
 
-			       	}
+			       	if (url2) {
+			       		if (!valueColumn2)
+			       			valueColumn2 = valueColumn;
+			       		var values2 = new Array();
+				    	$.ajax({
+				    		url: 'http://query.yahooapis.com/v1/public/yql', 
+				        	dataType: "jsonp",
+				        	data: { 
+					            q: "select * from csv where url='" + url2 + "'",
+					            format: 'json'
+			          		},
+			          		success: function(data) {
+			          			$.each(data.query.results.row, function(index, object) {
+					        		if(index !== "0") { 
+					        			switch (valueColumn2) {
+					        				case 1: 
+							        			values2[index-1] = parseFloat(data.query.results.row[index].col1);
+							        			break;
+							        		case 2: 
+							        			values2[index-1] = parseFloat(data.query.results.row[index].col2);
+							        			break;
+							        		default: 
+							        			values2[index-1] = parseFloat(data.query.results.row[index].col1);
+							        			break;
+					        			}
+					        		}
+							    });
+
+							    var weeklyData2 = getWeek(values2, week);
+
+							    var chartData2 = convertToChartData(color, name, thisWeeksLabels, weeklyData2);
+
+							    chartData2.datasets[0].data = values2;
+							    chartData2 = chartData2.datasets[0];
+
+							    chartData.datasets[1] = chartData2;
+							    
+		    				   	var ctx = document.getElementById(name).getContext("2d");
+						    	var myChart = new Chart(ctx);
+						    	myChart.Line(chartData, chartDefaults);
+						    	return;
+			          		}
+				    	})
+				    }
 
 				   	var ctx = document.getElementById(name).getContext("2d");
 			    	var myChart = new Chart(ctx);
@@ -157,19 +145,14 @@
     	}
 
     	function clearCanvas(name) {
-    		var html = $('.' + name).html();
-			$('.' + name).html("");
-			$('.' + name).html(html);	
+			$('#' + name).replaceWith('<canvas id="'+name+'" class="canvas"></canvas>');
     	}
 
     	function updateGraphs() {
-    		clearCanvas('mileage');
-    		clearCanvas('sleep');
-    		clearCanvas('carbs');
 
-	    	getAndGraphDataSet(mileageUrl, 1, "mileage", "Line", null, week, "red");
-			getAndGraphDataSet(sleepUrl, 1, "sleep", "Line", null, week, "orange");
-			getAndGraphDataSet(nutrientsUrl, 1, "carbs", "Line", null, week, "green");
+	    	newChart(mileageUrl, paceUrl, 1, "mileage", "Line", null, week, "red");
+			newChart(sleepUrl, null, 1, "sleep", "Line", null, week, "orange");
+			newChart(nutrientsUrl, nutrientsUrl, 1, "carbs", "Line", null, week, "green", 2);
 
 			if (week <= 0) {
 				$('.forward').hide();
@@ -190,12 +173,10 @@
         
 		$('.back').click(function() {
 			week += 1; 
-			console.log(week);
 			updateGraphs();
 		});
 		$('.forward').click(function() {
 			week -= 1; 
-			console.log(week);
 			updateGraphs();
 		});
 
