@@ -9,6 +9,8 @@
 	<div class="navigation">
 		<a class="back button">Back</a>
 		<a class="forward button">Forward</a>
+		<a class="week button">Week View</a>
+		<a class="month button">Month View</a>
 	</div>
 
 	<div class="mileage container">
@@ -37,7 +39,7 @@
 	</div>
 
 	<div class="avgMacronutrients container">
-		<h1>Macronutrient Breakdown- <span class="whichWeek">This Week</span></h1>
+		<h1>Macronutrient Breakdown- <span class="doughnutTime">Last Week</span></h1>
 		<canvas id="avgMacronutrients" class="canvas"></canvas>
 	</div>
 
@@ -58,6 +60,9 @@
     	var avgNutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=avgMacronutrients';
 
     	var week = 0;
+    	var month = 0;
+    	var state = "month";
+		$('.month').css('border', '2px solid #32BAF9');
 
     	var uiFont = 'Open Sans';
     	var chartDefaults = {
@@ -67,7 +72,7 @@
 		  	tooltipTitleFontStyle : 'normal'
     	}
 
-    	function newLine(url, url2, valueColumn, name, week, color, valueColumn2) {
+    	function newLine(url, url2, valueColumn, name, week, color, valueColumn2, state) {
     		var values = new Array();
     		var labels = new Array();
 
@@ -88,9 +93,15 @@
 	        			labels[index-1] = data.query.results.row[index].col0;
 				    });
 
-					var weeklyData = getWeek(values, week);
-	    			var thisWeeksLabels = getWeek(labels, week);
-	    			var chartData = convertToLineData(color, name, thisWeeksLabels, weeklyData, null);
+		    		if (state != "month") {
+						var currentData = getWeek(values, week);
+	    				var currentLabels = getWeek(labels, week);
+	    			} else { 
+	    				var currentData = getMonth(values, month); 
+	    				var currentLabels = getMonth(labels, month);
+	    			}
+
+	    			var chartData = convertToLineData(color, name, currentLabels, currentData, null);
 
 			       	if (url2) {
 			       		if (!valueColumn2)
@@ -110,9 +121,13 @@
 					        		}
 							    });
 
-							    var weeklyData2 = getWeek(values2, week);
+					    		if (state != "month") {
+									var currentData2 = getWeek(values, week);
+				    			} else { 
+				    				var currentData2 = getMonth(values, month); 
+				    			}
 
-							    var chartData2 = convertToLineData(color, name, thisWeeksLabels, weeklyData2);
+							    var chartData2 = convertToLineData(color, name, currentLabels, currentData2);
 
 							    chartData2.datasets[0].data = values2;
 							    chartData2 = chartData2.datasets[0];
@@ -135,7 +150,7 @@
         	});
     	}
 
-    	function newDoughnut(url, valueColumn1, valueColumn2, valueColumn3, name, week, label1, label2, label3) {
+    	function newDoughnut(url, valueColumn1, valueColumn2, valueColumn3, name, week, label1, label2, label3, state) {
     		var values1 = new Array();
     		var values2 = new Array();
     		var values3 = new Array();
@@ -176,45 +191,107 @@
     		return data.reverse().slice((7*weeksAgo), ((7*weeksAgo)+7)).reverse();
     	}
 
+    	function getMonth(data, monthsAgo) {
+    		return data.reverse().slice((30*monthsAgo), ((30*monthsAgo)+30)).reverse();
+    	}
+
     	function clearCanvas(name, chartType) {
 			$('#' + name).replaceWith('<canvas id="'+name+'" class="canvas '+chartType+'"></canvas>');
     	}
 
     	function updateGraphs() {
 
-	    	newLine(mileageUrl, paceUrl, 1, "mileage", week, "red");
-			newLine(sleepUrl, null, 1, "sleep", week, "orange");
-			newLine(nutrientsUrl, nutrientsUrl, 1, "carbs", week, "green", 2);
-			newLine(nutrientsUrl, null, 3, "protein", week, "blue");
-			newLine(nutrientsUrl, null, 6, "calories", week, "purple");
-			newDoughnut(avgNutrientsUrl, 1, 3, 4, "avgMacronutrients", week, "Carbs", "Protein", "Fat");
+	    	newLine(mileageUrl, paceUrl, 1, "mileage", week, "red", null, state);
+			newLine(sleepUrl, null, 1, "sleep", week, "orange", null, state);
+			newLine(nutrientsUrl, nutrientsUrl, 1, "carbs", week, "green", 2, state);
+			newLine(nutrientsUrl, null, 3, "protein", week, "blue", null, state);
+			newLine(nutrientsUrl, null, 6, "calories", week, "purple", null, state);
+			newDoughnut(avgNutrientsUrl, 1, 3, 4, "avgMacronutrients", week, "Carbs", "Protein", "Fat", state);
 
-			if (week <= 0) {
-				$('.forward').hide();
-			} else {
-				$('.forward').show();
+			switch (state) {
+				case 'week': 
+					if (week <= 0) {
+						$('.forward').hide();
+					} else {
+						$('.forward').show();
+					}
+					break;
+				case 'month':
+					if (month <= 0) {
+						$('.forward').hide();
+					} else {
+						$('.forward').show();
+					}
+					break;
 			}
 
-			if (week == 0) {
-				$('.whichWeek').html('This Week');
-			} else if (week == 1) {
-				$('.whichWeek').html('Last Week');
+
+			if (state == "week") {
+				switch(week) {
+					case 0:
+						$('.whichWeek').html('This '+state);
+						$('.doughnutTime').html('Last '+state);
+						break;
+					case 1: 
+						$('.whichWeek').html('Last '+state);
+						$('.doughnutTime').html('2 '+state+'s Ago');
+						break;
+					default: 
+						$('.whichWeek').html(week +" "+ state +'s Ago');
+						$('.doughnutTime').html(week +" "+ state +'s Ago')
+						break;
+				}	
 			} else {
-				$('.whichWeek').html(week + ' Weeks Ago');
+				switch(month) {
+					case 0:
+						$('.whichWeek').html('This '+state);
+						$('.doughnutTime').html('Last Week');
+						break;
+					case 1: 
+						$('.whichWeek').html('Last '+state);
+						$('.doughnutTime').html('2 Weeks Ago');
+						break;
+					default: 
+						$('.whichWeek').html(week +" "+ state +'s Ago');
+						$('.doughnutTime').html(month +'Weeks Ago')
+						break;
+				}	
 			}
+
     	}
 
     	updateGraphs();
         
 		$('.back').click(function() {
-			week += 1; 
+			switch (state) {
+				case "week": 
+					week += 1; 
+				case "month":
+					month +=1; 
+			}
 			updateGraphs();
 		});
 		$('.forward').click(function() {
-			week -= 1; 
+			switch (state) {
+				case "week": 
+					week -= 1; 
+				case "month":
+					month -=1; 
+			}
 			updateGraphs();
 		});
-
+		$('.month').click(function() {
+			state = "month";
+			$('.month').css('border', '2px solid #32BAF9');
+			$('.week').css('border', '1px solid #BBBBBB');
+			updateGraphs();
+		});
+		$('.week').click(function() {
+			state = "week";
+			$('.week').css('border', '2px solid #32BAF9');
+			$('.month').css('border', '1px solid #BBBBBB');
+			updateGraphs();
+		});
 	});  
     </script>
 </body>
