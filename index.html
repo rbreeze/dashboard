@@ -107,11 +107,11 @@
 				    });
 
 		    		if (state != "month") {
-						var currentData = getWeek(values, week);
-	    				var currentLabels = getWeek(labels, week);
+						var currentData = getWeekData(values, week);
+	    				var currentLabels = getWeekData(labels, week);
 	    			} else { 
-	    				var currentData = getMonth(values, month); 
-	    				var currentLabels = getMonth(labels, month);
+	    				var currentData = getMonthData(values, month); 
+	    				var currentLabels = getMonthData(labels, month);
 	    			}
 
 	    			var chartData = convertToLineData(color, name, currentLabels, currentData, null);
@@ -135,14 +135,14 @@
 							    });
 
 					    		if (state != "month") {
-									var currentData2 = getWeek(values2, week);
+									var currentData2 = getWeekData(values2, week);
 				    			} else { 
-				    				var currentData2 = getMonth(values2, month); 
+				    				var currentData2 = getMonthData(values2, month); 
 				    			}
 
 							    var chartData2 = convertToLineData(color, name, currentLabels, currentData2);
 
-							    chartData2.datasets[0].data = values2;
+							    chartData2.datasets[0].data = currentData2;
 							    chartData2 = chartData2.datasets[0];
 
 							    chartData.datasets[1] = chartData2;
@@ -200,11 +200,11 @@
 	    	});
 	    }
 
-    	function getWeek(data, weeksAgo) {
+    	function getWeekData(data, weeksAgo) {
     		return data.reverse().slice((7*weeksAgo), ((7*weeksAgo)+7)).reverse();
     	}
 
-    	function getMonth(data, monthsAgo) {
+    	function getMonthData(data, monthsAgo) {
     		return data.reverse().slice((30*monthsAgo), ((30*monthsAgo)+30)).reverse();
     	}
 
