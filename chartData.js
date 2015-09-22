@@ -97,19 +97,23 @@ function convertToLineData(color, name, labels, data, night) {
 }
 
 function convertToDoughnutData(value1, value2, value3, name1, name2, name3) {
+	var total = value1 + value2 + value3; 
+	var percent1 = (value1 / total) * 100;
+	var percent2 = (value2 / total) * 100;
+	var percent3 = (value3 / total) * 100;
 	return data = [
 	    {
-	        value: value1,
+	        value: percent1.toFixed(2),
 	        color:"rgba(105,235,124,1)",
 	        label: name1
 	    },
 	    {
-	        value: value2,
+	        value: percent2.toFixed(2),
 	        color: "rgba(70,127,230,1)",
 	        label: name2
 	    },
 	    {
-	        value: value3,
+	        value: percent3.toFixed(2),
 	        color: "rgba(234,120,123,1)",
 	        label: name3
 	    }
