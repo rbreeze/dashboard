@@ -1,4 +1,19 @@
-function convertToLineData(color, name, labels, data) {
+function convertToLineData(color, name, labels, data, night) {
+	if(!night)
+		night == false;
+	var redStroke = "rgba(175,0,3,1.0)";
+	var orangeStroke = "rgba(182,71,4,1.0)";
+	var greenStroke = "rgba(19,145,12,1.0)";
+	var blueStroke = "rgba(7,66,146,1.0)";
+	var purpleStroke = "rgba(54,0,127,1.0)";
+	//Night Mode (in progress)
+	if (night == true) {
+		redStroke = "rgba(252,0,10,1.0)";
+		orangeStroke = "rgba(252,74,7,1.0)";
+		greenStroke = "rgba(30,214,4,1.0)";
+		blueStroke = "rgba(8,82,226,1.0)";
+		purpleStroke = "rgba(114,0,226,1.0)";
+	}
    	switch(color) {
    		case "red": 
        		return chartData = {
@@ -6,9 +21,9 @@ function convertToLineData(color, name, labels, data) {
 		        datasets: [{
 		        	label: name,
             		fillColor : "rgba(234,120,123,0.4)",
-            		strokeColor : "rgba(175,0,3,1.0)",
+            		strokeColor : redStroke,
             		pointColor : "#fff",
-            		pointStrokeColor : "rgba(139,0,5,1.0)",
+            		pointStrokeColor : redStroke,
         			data: data
         		}]
     		}
@@ -19,9 +34,9 @@ function convertToLineData(color, name, labels, data) {
 				datasets: [{
 		        	label: name,
             		fillColor : "rgba(228,136,76,0.4)",
-            		strokeColor : "rgba(182,71,4,1.0)",
+            		strokeColor : orangeStroke,
             		pointColor : "#fff",
-            		pointStrokeColor : "rgba(182,71,4,1.0)",
+            		pointStrokeColor : orangeStroke,
         			data: data
         		}]				    		
         	}
@@ -32,9 +47,9 @@ function convertToLineData(color, name, labels, data) {
 				datasets: [{
 		        	label: name,
             		fillColor : "rgba(105,235,124,0.4)",
-            		strokeColor : "rgba(19,145,12,1.0)",
+            		strokeColor : greenStroke,
             		pointColor : "#fff",
-            		pointStrokeColor : "rgba(19,145,12,1.0)",
+            		pointStrokeColor : greenStroke,
         			data: data
         		}]				    		
         	}
@@ -45,9 +60,9 @@ function convertToLineData(color, name, labels, data) {
 				datasets: [{
 		        	label: name,
             		fillColor : "rgba(70,127,230,0.4)",
-            		strokeColor : "rgba(7,66,146,1.0)",
+            		strokeColor : blueStroke,
             		pointColor : "#fff",
-            		pointStrokeColor : "rgba(7,66,146,1.0)",
+            		pointStrokeColor : blueStroke,
         			data: data
         		}]				    		
         	}
@@ -58,9 +73,9 @@ function convertToLineData(color, name, labels, data) {
 				datasets: [{
 		        	label: name,
             		fillColor : "rgba(149,34,223,0.4)",
-            		strokeColor : "rgba(54,0,127,1.0)",
+            		strokeColor : purpleStroke,
             		pointColor : "#fff",
-            		pointStrokeColor : "rgba(54,0,127,1.0)",
+            		pointStrokeColor : purpleStroke,
         			data: data
         		}]				    		
         	}
@@ -71,9 +86,9 @@ function convertToLineData(color, name, labels, data) {
 		        datasets: [{
 		        	label: name,
             		fillColor : "rgba(234,120,123,0.4)",
-            		strokeColor : "rgba(175,0,3,1.0)",
+            		strokeColor : redStroke,
             		pointColor : "#fff",
-            		pointStrokeColor : "rgba(139,0,5,1.0)",
+            		pointStrokeColor : redStroke,
         			data: data
         		}]
     		}

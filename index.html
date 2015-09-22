@@ -33,6 +33,11 @@
 		<canvas id="protein" class="canvas"></canvas>
 	</div>
 
+	<div class="protein container">
+		<h1>Fat &amp; SatFat- <span class="whichWeek">This Week</span></h1>
+		<canvas id="fat" class="canvas"></canvas>
+	</div>
+
 	<div class="calories container">
 		<h1>Calories- <span class="whichWeek">This Week</span></h1>
 		<canvas id="calories" class="canvas"></canvas>
@@ -49,6 +54,14 @@
 	<script src="chartData.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
+
+    	//Night Mode (in progress)
+    	// $('.container').css({
+    	// 	'background' : '#000',
+    	// });
+    	// $('h1').css({
+    	// 	'color' : '#fff'
+    	// });
 
     	//establish some variables    	
     	var urlStem = "https://spreadsheets.google.com/tq?key=";
@@ -206,6 +219,7 @@
 			newLine(nutrientsUrl, nutrientsUrl, 1, "carbs", week, "green", 2, state);
 			newLine(nutrientsUrl, null, 3, "protein", week, "blue", null, state);
 			newLine(nutrientsUrl, null, 6, "calories", week, "purple", null, state);
+			newLine(nutrientsUrl, nutrientsUrl, 4, "fat", week, "red", 5, state);
 			newDoughnut(avgNutrientsUrl, 1, 3, 4, "avgMacronutrients", week, "Carbs", "Protein", "Fat", state);
 
 			switch (state) {
