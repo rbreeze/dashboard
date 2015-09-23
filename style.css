@@ -15,7 +15,7 @@ html {
 h1, a {
 	font-family: 'Open Sans Light';
 	font-weight: 300;
-	color: #4C4C4C;
+	color: #282828;
 }
 
 h1 {
@@ -35,7 +35,7 @@ a.button {
 }
 
 .container {
-	background: #EFEFEF;
+	background: #F6F6F6;
 	display: inline-block;	
 	margin: 20px;
 	width: 410px;

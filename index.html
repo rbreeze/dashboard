@@ -23,19 +23,24 @@
 		<canvas id="sleep" class="canvas"></canvas>
 	</div>
 
+	<div class="water container">
+		<h1>Water- <span class="whichWeek">This Week</span></h1>
+		<canvas id="water" class="canvas"></canvas>
+	</div>
+
 	<div class="carbs container">
 		<h1>Carbs &amp; Sugar- <span class="whichWeek">This Week</span></h1>
 		<canvas id="carbs" class="canvas"></canvas>
 	</div>
 
-	<div class="protein container">
-		<h1>Protein- <span class="whichWeek">This Week</span></h1>
-		<canvas id="protein" class="canvas"></canvas>
+	<div class="fat container">
+		<h1>Fat &amp; SatFat- <span class="whichWeek">This Week</span></h1>
+		<canvas id="fat" class="canvas"></canvas>
 	</div>
 
 	<div class="protein container">
-		<h1>Fat &amp; SatFat- <span class="whichWeek">This Week</span></h1>
-		<canvas id="fat" class="canvas"></canvas>
+		<h1>Protein- <span class="whichWeek">This Week</span></h1>
+		<canvas id="protein" class="canvas"></canvas>
 	</div>
 
 	<div class="calories container">
@@ -71,6 +76,7 @@
     	var sleepUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Sleep';
     	var nutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Macronutrients';
     	var avgNutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=avgMacronutrients';
+    	var waterUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Water';
 
     	var week = 0;
     	var month = 0;
@@ -216,6 +222,7 @@
 
 	    	newLine(mileageUrl, paceUrl, 1, "mileage", week, "red", null, state);
 			newLine(sleepUrl, null, 1, "sleep", week, "orange", null, state);
+			newLine(waterUrl, null, 1, "water", week, "blue", null, state);
 			newLine(nutrientsUrl, nutrientsUrl, 1, "carbs", week, "green", 2, state);
 			newLine(nutrientsUrl, null, 3, "protein", week, "blue", null, state);
 			newLine(nutrientsUrl, null, 6, "calories", week, "purple", null, state);
