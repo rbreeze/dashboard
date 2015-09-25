@@ -53,6 +53,32 @@
 		<canvas id="avgMacronutrients" class="canvas"></canvas>
 	</div>
 
+	<div class="avgValues container">
+		<h1> All Time Averages </h1>
+		<table>
+			<tr>
+				<td class="left">Sleep</td>
+				<td id="avgSleep"></td>
+			</tr>
+			<tr>
+				<td class="left">Sugar</td>
+				<td id="avgSugar"></td>
+			</tr>
+			<tr>
+				<td class="left">Calories</td>
+				<td id="avgCalories"></td>
+			</tr>
+			<tr>
+				<td class="left">Mileage</td>
+				<td id="avgMileage"></td>
+			</tr>
+			<tr>
+				<td class="left">Pace</td>
+				<td id="avgPace"></td>
+			</tr>
+		</table>
+	</div>
+
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="jquery-csv.min.js"></script>
 	<script src="Chart.min.js"></script>
@@ -71,12 +97,14 @@
     	//establish some variables    	
     	var urlStem = "https://spreadsheets.google.com/tq?key=";
    		var query = "&tqx=out:csv&callback=processData"
-    	var mileageUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Mileage'
-    	var paceUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Paces';
-    	var sleepUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Sleep';
-    	var nutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Macronutrients';
-    	var avgNutrientsUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=avgMacronutrients';
-    	var waterUrl = urlStem + '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc' + query + '&sheet=Water';
+   		var id = '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc';
+    	var mileageUrl = urlStem + id + query + '&sheet=Mileage'
+    	var paceUrl = urlStem + id + query + '&sheet=Paces';
+    	var sleepUrl = urlStem + id + query + '&sheet=Sleep';
+    	var nutrientsUrl = urlStem + id + query + '&sheet=Macronutrients';
+    	var avgNutrientsUrl = urlStem + id + query + '&sheet=avgMacronutrients';
+    	var waterUrl = urlStem + id + query + '&sheet=Water';
+    	var avgValuesUrl = urlStem + id + query + '&sheet=avgValues'
 
     	var week = 0;
     	var month = 0;
@@ -206,6 +234,24 @@
 	    	});
 	    }
 
+	    function newStat(url, valueRow, name, label) {
+			$.ajax({
+	        	url: 'http://query.yahooapis.com/v1/public/yql', 
+	        	dataType: "jsonp",
+	        	data: { 
+		            q: "select * from csv where url='" + url + "'",
+		            format: 'json'
+          		},
+	        	success: function(data) {
+	        		var values = new Array();
+		    		$.each(data.query.results.row, function(index, object) {
+	        			values[index] = parseFloat(data.query.results.row[index].col1);
+				    });
+				   	$('#' + name).html(values[valueRow-1].toFixed(2) + " " + label);
+				}
+			});
+	    }
+
     	function getWeekData(data, weeksAgo) {
     		return data.reverse().slice((7*weeksAgo), ((7*weeksAgo)+7)).reverse();
     	}
@@ -228,6 +274,11 @@
 			newLine(nutrientsUrl, null, 6, "calories", week, "purple", null, state);
 			newLine(nutrientsUrl, nutrientsUrl, 4, "fat", week, "red", 5, state);
 			newDoughnut(avgNutrientsUrl, 1, 3, 4, "avgMacronutrients", week, "Carbs", "Protein", "Fat", state);
+			newStat(avgValuesUrl, 1, "avgSleep", "minutes");
+			newStat(avgValuesUrl, 2, "avgSugar", "grams");
+			newStat(avgValuesUrl, 3, "avgCalories", "KCal");
+			newStat(avgValuesUrl, 4, "avgMileage", "miles");
+			newStat(avgValuesUrl, 5, "avgPace", "min/mile");
 
 			switch (state) {
 				case 'week': 
