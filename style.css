@@ -37,8 +37,8 @@ a.button {
 .container {
 	background: #F6F6F6;
 	display: inline-block;	
-	margin: 20px;
-	width: 410px;
+	margin: 15px;
+	width: 430px;
 	height: 395px;
 	padding: 15px;
 	padding-top: 0px;
@@ -75,6 +75,6 @@ td.left {
 }
 
 .canvas {
-	width: 410px;
+	width: 430px;
 	height: 300px;
 }
