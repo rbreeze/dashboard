@@ -119,7 +119,7 @@
 		  	tooltipTitleFontStyle : 'normal'
     	}
 
-    	function newLine(url, url2, valueColumn, name, week, color, valueColumn2, state) {
+    	function newLine(url, url2, valueColumn, name, week, color, valueColumn2, state, stepWidth, shouldOverride, minValue, maxValue) {
     		var values = new Array();
     		var labels = new Array();
 
@@ -180,18 +180,56 @@
 							    chartData2 = chartData2.datasets[0];
 
 							    chartData.datasets[1] = chartData2;
+
+								if (shouldOverride == true) {
+								    var chartOptions = {
+								    	scaleOverride: true
+								    }
+							    }
+							    else {
+								    var chartOptions = {
+								    	scaleOverride: false
+								    }				    	
+							    }
+
+							    var extraOptions = {
+						    		scaleStartValue: minValue,
+						    		scaleStepWidth: stepWidth,
+						    		scaleSteps: (maxValue - minValue) / stepWidth
+							    }
+
+							    $.extend(chartOptions, extraOptions);
 							    
 		    				   	var ctx = document.getElementById(name).getContext("2d");
 						    	var myChart = new Chart(ctx);
-						    	myChart.Line(chartData, chartDefaults);
+						    	myChart.Line(chartData, $.extend(chartDefaults, chartOptions));
 						    	return;
 			          		}
 				    	})
 				    }
 
+				    if (shouldOverride == true) {
+					    var chartOptions = {
+					    	scaleOverride: true
+					    }
+				    }
+				    else {
+					    var chartOptions = {
+					    	scaleOverride: false
+					    }				    	
+				    }
+
+				    var extraOptions = {
+			    		scaleStartValue: minValue,
+			    		scaleStepWidth: stepWidth,
+			    		scaleSteps: (maxValue - minValue) / stepWidth
+				    }
+
+				    $.extend(chartOptions, extraOptions);
+
 				   	var ctx = document.getElementById(name).getContext("2d");
 			    	var myChart = new Chart(ctx);
-	    			myChart.Line(chartData, chartDefaults);
+	    			myChart.Line(chartData, $.extend(chartDefaults, chartOptions));
 	        	},
 	        	error: function() { console.log("Error! Failed to get data set."); }
         	});
@@ -227,7 +265,7 @@
 			    	var myChart = new Chart(ctx);
 			    	var chartOptions = {
 			    		segmentShowStroke: false,
-			    		percentageInnerCutout: 60
+			    		percentageInnerCutout: 60   		
 			    	}
 	    			myChart.Doughnut(chartData, $.extend(chartDefaults, chartOptions));
           		}
@@ -266,13 +304,13 @@
 
     	function updateGraphs() {
 
-	    	newLine(mileageUrl, mileageUrl, 1, "mileage", week, "red", 3, state);
-			newLine(sleepUrl, null, 1, "sleep", week, "orange", null, state);
-			newLine(waterUrl, null, 1, "water", week, "blue", null, state);
-			newLine(nutrientsUrl, nutrientsUrl, 1, "carbs", week, "green", 2, state);
-			newLine(nutrientsUrl, null, 3, "protein", week, "blue", null, state);
-			newLine(nutrientsUrl, null, 6, "calories", week, "purple", null, state);
-			newLine(nutrientsUrl, nutrientsUrl, 4, "fat", week, "red", 5, state);
+	    	newLine(mileageUrl, mileageUrl, 1, "mileage", week, "red", 3, state, 1.5, true, 0, 13.5);
+			newLine(sleepUrl, null, 1, "sleep", week, "orange", null, state, 50, true, 100, 550);
+			newLine(waterUrl, null, 1, "water", week, "blue", null, state, 8, true, 0, 124);
+			newLine(nutrientsUrl, nutrientsUrl, 1, "carbs", week, "green", 2, state, null, false);
+			newLine(nutrientsUrl, null, 3, "protein", week, "blue", null, state, 15, true, 0, 190);
+			newLine(nutrientsUrl, null, 6, "calories", week, "purple", null, state, 150, true, 0, 3700);
+			newLine(nutrientsUrl, nutrientsUrl, 4, "fat", week, "red", 5, state, null, false);
 			newDoughnut(avgNutrientsUrl, 1, 3, 4, "avgMacronutrients", week, "Carbs", "Protein", "Fat", state);
 			newStat(avgValuesUrl, 1, "avgSleep", "minutes");
 			newStat(avgValuesUrl, 2, "avgSugar", "grams");
