@@ -87,9 +87,16 @@
 	<script src="jquery-csv.min.js"></script>
 	<script src="Chart.min.js"></script>
 	<script src="chartData.js"></script>
-	<script src="sheetCharts.js"></script>
+	<script src="https://raw.githubusercontent.com/rbreeze/sheetCharts/gh-pages/sheetCharts.js"></script>
     <script type="text/javascript">
     $(document).ready(function() {
+
+      $('.canvas').each(function() {
+         var parent = $(this).parent(); 
+         var id = $(this).attr('id');
+         this.remove();
+         parent.append('<canvas class="canvas" id="' + id + '"></canvas>');
+      });
  	
     	$('.month').css('border', '2px solid #32BAF9');
 
