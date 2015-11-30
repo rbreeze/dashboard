@@ -89,7 +89,12 @@
 	<script src="chartData.js"></script>
 	<script src="https://raw.githubusercontent.com/rbreeze/sheetCharts/gh-pages/sheetCharts.js"></script>
     <script type="text/javascript">
-    $(document).ready(function() {
+
+      var state = "month";
+      var timeBlock = 0; 
+      var timeBlockLength = 18; 
+      
+   $(document).ready(function() {
 
       $('.canvas').each(function() {
          var parent = $(this).parent(); 
@@ -97,201 +102,8 @@
          this.remove();
          parent.append('<canvas class="canvas" id="' + id + '"></canvas>');
       });
- 	
-    	$('.month').css('border', '2px solid #32BAF9');
-
-        var state = "month";
-        var timeBlock = 0; 
-        var timeBlockLength = 18; 
-
-        function updateGraphs() {
-
-        	var id = '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc';
-
-            switch(state) {
-               case 'month': 
-                  timeBlockLength = 18;
-                  break;
-               case 'week':
-                  timeBlockLength = 7;
-                  break;
-               default:
-                  timeBlockLength = 18;
-                  break;
-            }
-
-            $('#mileage').newLineFromSheet({
-               color: 'red',
-               id: id, 
-               sheet: 'Mileage',
-               sheet2: 'Mileage',
-               valueColumn: 1,
-               valueColumn2: 3,
-               scaleOverride: true,
-               stepWidth: 1.5,
-               minValue: 0, 
-               maxValue: 13.5,
-               timeBlockLength: timeBlockLength, 
-               timeBlock: timeBlock
-            });
-
-            $('#sleep').newLineFromSheet({
-               color: 'orange',
-               id: id, 
-               sheet: 'Sleep',
-               scaleOverride: true,
-               stepWidth: 50,
-               minValue: 100, 
-               maxValue: 600,
-               timeBlockLength: timeBlockLength, 
-               timeBlock: timeBlock
-            });
-
-            $('#water').newLineFromSheet({
-               color: 'blue',
-               id: id, 
-               sheet: 'Water',
-               scaleOverride: true,
-               stepWidth: 8,
-               minValue: 0, 
-               maxValue: 124,
-               timeBlockLength: timeBlockLength, 
-               timeBlock: timeBlock
-            });
-
-            $('#carbs').newLineFromSheet({
-               color: 'green',
-               id: id, 
-               sheet: 'Macronutrients',
-               sheet2: 'Macronutrients',
-               valueColumn: 1,
-               valueColumn2: 2,
-               scaleOverride: false,
-               timeBlockLength: timeBlockLength, 
-               timeBlock: timeBlock
-            });
-
-            $('#protein').newLineFromSheet({
-               color: 'blue',
-               id: id, 
-               sheet: 'Macronutrients',
-               valueColumn: 3,
-               scaleOverride: true,
-               stepWidth: 15,
-               minValue: 0, 
-               maxValue: 190,
-               timeBlockLength: timeBlockLength, 
-               timeBlock: timeBlock
-            });
-
-            $('#calories').newLineFromSheet({
-               color: 'purple',
-               id: id, 
-               sheet: 'Macronutrients',
-               valueColumn: 6,
-               scaleOverride: true,
-               stepWidth: 250,
-               minValue: 0, 
-               maxValue: 3700,
-               timeBlockLength: timeBlockLength, 
-               timeBlock: timeBlock
-            });
-
-            $('#fat').newLineFromSheet({
-               color: 'red',
-               id: id, 
-               sheet: 'Macronutrients',
-               sheet2: 'Macronutrients',
-               valueColumn: 4,
-               valueColumn2: 5,
-               scaleOverride: true,
-               stepWidth: 15,
-               minValue: 0, 
-               maxValue: 150,
-               timeBlockLength: timeBlockLength, 
-               timeBlock: timeBlock
-            });
-
-            $('#avgMacronutrients').newDoughnutFromSheet({
-               id: id,
-               sheet: 'avgMacronutrients',
-               label1: 'Carbs',
-               label2: 'Protein',
-               label3: 'Fat',
-               valueColumn2: 3,
-               valueColumn3: 4,
-               timeBlock: timeBlock
-            });
-
-            $('#avgSleep').newStatFromSheet({
-               id: id,
-               sheet: 'avgValues',
-               valueRow: 1,
-               label: 'minutes'
-            });
-
-            $('#avgSugar').newStatFromSheet({
-               id: id, 
-               sheet: 'avgValues',
-               valueRow: 2, 
-               label: 'grams'
-            });
-
-            $('#avgCalories').newStatFromSheet({
-               id: id, 
-               sheet: 'avgValues',
-               valueRow: 3, 
-               label: 'KCal'
-            });
-
-            $('#avgMileage').newStatFromSheet({
-               id: id, 
-               sheet: 'avgValues',
-               valueRow: 4, 
-               label: 'miles'
-            });
-
-            $('#avgPace').newStatFromSheet({
-               id: id, 
-               sheet: 'avgValues',
-               valueRow: 5, 
-               label: 'min/mile'
-            });
-
-            switch (state) {
-               case 'week': 
-                  if (timeBlock <= 0) {
-                     $('.forward').hide();
-                  } else {
-                     $('.forward').show();
-                  }
-                  break;
-               case 'month':
-                  if (timeBlock <= 0) {
-                     $('.forward').hide();
-                  } else {
-                     $('.forward').show();
-                  }
-                  break;
-            }
-
-
-            switch(timeBlock) {
-               case 0:
-                  $('.whichWeek').html('This '+state);
-                  $('.doughnutTime').html('Last week');
-                  break;
-               case 1: 
-                  $('.whichWeek').html('Last '+state);
-                  $('.doughnutTime').html('2 weeks Ago');
-                  break;
-               default: 
-                  $('.whichWeek').html(week +" "+ state +'s Ago');
-                  $('.doughnutTime').html(week +' weeks Ago')
-                  break;
-            } 
-
-         }
+   
+      $('.month').css('border', '2px solid #32BAF9');
 
          updateGraphs();
 
@@ -319,7 +131,194 @@
             updateGraphs();
          });
          
-	});  
+   }); 
+
+    function updateGraphs() {
+
+      var id = '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc';
+
+      switch(state) {
+         case 'month': 
+            timeBlockLength = 20;
+            break;
+         case 'week':
+            timeBlockLength = 7;
+            break;
+         default:
+            timeBlockLength = 18;
+            break;
+      }
+
+      $('#mileage').newLineFromSheet({
+         color: 'red',
+         id: id, 
+         sheet: 'Mileage',
+         sheet2: 'Mileage',
+         valueColumn: 1,
+         valueColumn2: 3,
+         scaleOverride: true,
+         stepWidth: 1.5,
+         minValue: 0, 
+         maxValue: 13.5,
+         timeBlockLength: timeBlockLength, 
+         timeBlock: timeBlock
+      });
+
+      $('#sleep').newLineFromSheet({
+         color: 'orange',
+         id: id, 
+         sheet: 'Sleep',
+         scaleOverride: true,
+         stepWidth: 50,
+         minValue: 100, 
+         maxValue: 650,
+         timeBlockLength: timeBlockLength, 
+         timeBlock: timeBlock
+      });
+
+      $('#water').newLineFromSheet({
+         color: 'blue',
+         id: id, 
+         sheet: 'Water',
+         scaleOverride: true,
+         stepWidth: 8,
+         minValue: 0, 
+         maxValue: 124,
+         timeBlockLength: timeBlockLength, 
+         timeBlock: timeBlock
+      });
+
+      $('#carbs').newLineFromSheet({
+         color: 'green',
+         id: id, 
+         sheet: 'Macronutrients',
+         sheet2: 'Macronutrients',
+         valueColumn: 1,
+         valueColumn2: 2,
+         scaleOverride: false,
+         timeBlockLength: timeBlockLength, 
+         timeBlock: timeBlock
+      });
+
+      $('#protein').newLineFromSheet({
+         color: 'blue',
+         id: id, 
+         sheet: 'Macronutrients',
+         valueColumn: 3,
+         scaleOverride: true,
+         stepWidth: 15,
+         minValue: 0, 
+         maxValue: 190,
+         timeBlockLength: timeBlockLength, 
+         timeBlock: timeBlock
+      });
+
+      $('#calories').newLineFromSheet({
+         color: 'purple',
+         id: id, 
+         sheet: 'Macronutrients',
+         valueColumn: 6,
+         scaleOverride: true,
+         stepWidth: 250,
+         minValue: 0, 
+         maxValue: 4000,
+         timeBlockLength: timeBlockLength, 
+         timeBlock: timeBlock
+      });
+
+      $('#fat').newLineFromSheet({
+         color: 'red',
+         id: id, 
+         sheet: 'Macronutrients',
+         sheet2: 'Macronutrients',
+         valueColumn: 4,
+         valueColumn2: 5,
+         scaleOverride: true,
+         stepWidth: 15,
+         minValue: 0, 
+         maxValue: 175,
+         timeBlockLength: timeBlockLength, 
+         timeBlock: timeBlock
+      });
+
+      $('#avgMacronutrients').newDoughnutFromSheet({
+         id: id,
+         sheet: 'avgMacronutrients',
+         label1: 'Carbs',
+         label2: 'Protein',
+         label3: 'Fat',
+         valueColumn2: 3,
+         valueColumn3: 4,
+         timeBlock: timeBlock
+      });
+
+      $('#avgSleep').newStatFromSheet({
+         id: id,
+         sheet: 'avgValues',
+         valueRow: 1,
+         label: 'minutes'
+      });
+
+      $('#avgSugar').newStatFromSheet({
+         id: id, 
+         sheet: 'avgValues',
+         valueRow: 2, 
+         label: 'grams'
+      });
+
+      $('#avgCalories').newStatFromSheet({
+         id: id, 
+         sheet: 'avgValues',
+         valueRow: 3, 
+         label: 'KCal'
+      });
+
+      $('#avgMileage').newStatFromSheet({
+         id: id, 
+         sheet: 'avgValues',
+         valueRow: 4, 
+         label: 'miles'
+      });
+
+      $('#avgPace').newStatFromSheet({
+         id: id, 
+         sheet: 'avgValues',
+         valueRow: 5, 
+         label: 'min/mile'
+      });
+
+      switch(timeBlock) {
+         case 0:
+            $('.whichWeek').html('This '+state);
+            $('.doughnutTime').html('Last week');
+            break;
+         case 1:
+            $('.whichWeek').html('Last '+state);
+            $('.doughnutTime').html('2 weeks Ago');
+            break;
+         default: 
+            $('.whichWeek').html(timeBlock +" "+ state +'s Ago');
+            $('.doughnutTime').html(timeBlock +' weeks Ago')
+      } 
+
+      switch (state) {
+         case 'week': 
+            if (timeBlock <= 0) {
+               $('.forward').hide();
+            } else {
+               $('.forward').show();
+            }
+            break;
+         case 'month':
+            if (timeBlock <= 0) {
+               $('.forward').hide();
+            } else {
+               $('.forward').show();
+            }
+            break;
+      }
+
+   } 
     </script>
 </body>
 </html>

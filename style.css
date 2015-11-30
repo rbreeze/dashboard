@@ -50,7 +50,7 @@ a.button {
 	background: #F6F6F6;
 	display: inline-block;	
 	margin: 15px;
-	width: 430px;
+	width: 450px;
 	height: 395px;
 	padding: 15px;
 	padding-top: 0px;
@@ -87,6 +87,6 @@ td.left {
 }
 
 .canvas {
-	width: 430px;
+	width: 450px;
 	height: 300px;
 }
