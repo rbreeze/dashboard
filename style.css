@@ -7,6 +7,10 @@ html {
 	background: #454545;
 }
 
+body {
+	text-align: center;
+}
+
 h1, a {
 	font-family: 'Avenir Next';
 	color: #282828;
@@ -64,6 +68,7 @@ a.button {
 
 table {
 	font-size: 20px;
+	padding: 0;
 	margin: 0 auto;
 	font-family: 'Avenir Next';
 	border-collapse: collapse;
@@ -78,7 +83,7 @@ td.left {
 	border-right: 1px solid #222;
 }
 
-@media screen and (max-width: 975px) {
+@media screen and (max-width: 1030px) {
 	.container {
 		display: block;
 		float: none;
@@ -86,7 +91,31 @@ td.left {
 	}
 }
 
+.avgValues {
+	vertical-align: top;
+}
+
 .canvas {
 	width: 450px;
 	height: 300px;
+}
+
+.mobile {
+	width: 100%;
+	font-size: 25px;
+}
+
+.clear {
+	clear: both;
+}
+
+.noYear {
+	display: inline-block;
+	margin-top: 20px;
+}
+
+.centered {
+	display: block;
+	float: none;
+	margin: 0 auto;
 }

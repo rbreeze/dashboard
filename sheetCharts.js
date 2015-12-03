@@ -23,11 +23,17 @@
 			minValue: null,
 			maxValue: null,
 			sheet: null,
+			width: 450,
+			height: 300,
 			timeBlockLength: 18, 
 			chartOptions: { 
 				scaleFontFamily: uiFont,
 				tooltipFontFamily: uiFont,
 				pointLabelFontFamily: uiFont,
+				scaleFontSize: 12,
+				tooltipFontSize: 14,
+				tooltipTitleFontSize: 14,
+				pointDotStrokeWidth: 1,
 		  		tooltipTitleFontStyle : 'normal'
 		  	}
 		}, options);

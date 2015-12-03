@@ -1,6 +1,7 @@
 <html>
 <head>
 <title>Health Data- Remington Breeze</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <link rel="stylesheet" href="style.css" type="text/css">
 </head>
 
@@ -15,12 +16,18 @@
 		<a class="forward button">Forward</a>
 		<a class="week button">Week View</a>
 		<a class="month button">Month View</a>
+      <a class="year button">Year View</a>
 	</div>
 
 	<div class="mileage container">
-		<h1>Miles &amp; Paces- <span class="whichWeek">This Week</span></h1>
+		<h1>Miles- <span class="whichWeek">This Week</span></h1>
 		<canvas id="mileage" class="canvas"></canvas>
 	</div>
+
+   <div class="pace container">
+      <h1>Paces- <span class="whichWeek">This Week</span></h1>
+      <canvas id="pace" class="canvas"></canvas>
+   </div>
 
 	<div class="sleep container">
 		<h1>Sleep- <span class="whichWeek">This Week</span></h1>
@@ -52,12 +59,12 @@
 		<canvas id="calories" class="canvas"></canvas>
 	</div>
 
-	<div class="avgMacronutrients container">
-		<h1>Macronutrient Percentages- <span class="doughnutTime">Last Week</span></h1>
-		<canvas id="avgMacronutrients" class="canvas"></canvas>
-	</div>
+   <div class="avgMacronutrients container noYear">
+      <h1>Macronutrient Percentages- <span class="doughnutTime">Last Week</span></h1>
+      <canvas id="avgMacronutrients" class="canvas noYear"></canvas>
+   </div>
 
-	<div class="avgValues container">
+	<div class="avgValues container noYear">
 		<h1> All Time Averages </h1>
 		<table>
 			<tr>
@@ -83,25 +90,33 @@
 		</table>
 	</div>
 
+   <div class="clear"></div>
+
 	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
 	<script src="jquery-csv.min.js"></script>
 	<script src="Chart.min.js"></script>
 	<script src="chartData.js"></script>
-	<script src="https://raw.githubusercontent.com/rbreeze/sheetCharts/gh-pages/sheetCharts.js"></script>
+	<script src="sheetCharts.js"></script>
     <script type="text/javascript">
 
       var state = "month";
       var timeBlock = 0; 
       var timeBlockLength = 18; 
+      var chartOptions = {};
+      var windowWidth;
       
    $(document).ready(function() {
+      windowWidth = $(window).width();
+      function checkWidth() {
+         if (state == 'year' && windowWidth < 1000) {
+            $('.month').trigger('click');
+            updateGraphs();
+         }
+      }
 
-      $('.canvas').each(function() {
-         var parent = $(this).parent(); 
-         var id = $(this).attr('id');
-         this.remove();
-         parent.append('<canvas class="canvas" id="' + id + '"></canvas>');
-      });
+      checkWidth()
+
+      $(window).resize(checkWidth);
    
       $('.month').css('border', '2px solid #32BAF9');
 
@@ -117,10 +132,19 @@
             updateGraphs();
          });
 
+         $('.year').click(function() {
+            state = "year";
+            $('.year').css('border', '2px solid #32BAF9');
+            $('.month').css('border', '1px solid #BBBBBB');
+            $('.week').css('border', '1px solid #BBBBBB');
+            updateGraphs();
+         });
+
          $('.month').click(function() {
             state = "month";
             $('.month').css('border', '2px solid #32BAF9');
             $('.week').css('border', '1px solid #BBBBBB');
+            $('.year').css('border', '1px solid #BBBBBB');
             updateGraphs();
          });
 
@@ -128,6 +152,7 @@
             state = "week";
             $('.week').css('border', '2px solid #32BAF9');
             $('.month').css('border', '1px solid #BBBBBB');
+            $('.year').css('border', '1px solid #BBBBBB');
             updateGraphs();
          });
          
@@ -135,33 +160,77 @@
 
     function updateGraphs() {
 
+      $('.canvas').each(function() {
+         var parent = $(this).parent(); 
+         var id = $(this).attr('id');
+         this.remove();
+         parent.append('<canvas class="canvas" id="' + id + '"></canvas>');
+      });
+
       var id = '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc';
+      var defaultWidth = 500;
+      var width;
 
       switch(state) {
          case 'month': 
-            timeBlockLength = 20;
+            $('.container').removeClass('centered');
+            timeBlockLength = 30;
+            width = defaultWidth;
             break;
          case 'week':
-            timeBlockLength = 7;
+            $('.container').removeClass('centered');
+            timeBlockLength = 9;
+            width = defaultWidth;
+            break;
+         case 'year':
+            $('.container').addClass('centered');
+            width = 1000;
+            timeBlockLength = 75;
+            break;
+         case 'mobile':
+            $('.container').addClass('centered');
+            timeBlockLength = 13;
+            width = $(document).width() - 25;
+            state = 'month';
             break;
          default:
             timeBlockLength = 18;
             break;
       }
 
+      $('.canvas').not('.noYear').css({ 'width' : width });
+      $('.container').not('.noYear').css({ 'width' : width });
+      $('.noYear').css({'width': defaultWidth});
+      $('#avgMacronutrients').css({'width': defaultWidth});
+      $('.noYear').removeClass('centered');
+
       $('#mileage').newLineFromSheet({
          color: 'red',
          id: id, 
          sheet: 'Mileage',
-         sheet2: 'Mileage',
          valueColumn: 1,
-         valueColumn2: 3,
          scaleOverride: true,
          stepWidth: 1.5,
          minValue: 0, 
          maxValue: 13.5,
+         width: 1000,
          timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
+      });
+
+      $('#pace').newLineFromSheet({
+         color: 'blue',
+         id: id, 
+         sheet: 'Paces',
+         valueColumn: 3,
+         scaleOverride: true,
+         stepWidth: 1,
+         minValue: 2, 
+         maxValue: 8,
+         timeBlockLength: timeBlockLength, 
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
       });
 
       $('#sleep').newLineFromSheet({
@@ -173,7 +242,8 @@
          minValue: 100, 
          maxValue: 650,
          timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
       });
 
       $('#water').newLineFromSheet({
@@ -185,7 +255,8 @@
          minValue: 0, 
          maxValue: 124,
          timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
       });
 
       $('#carbs').newLineFromSheet({
@@ -197,7 +268,8 @@
          valueColumn2: 2,
          scaleOverride: false,
          timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
       });
 
       $('#protein').newLineFromSheet({
@@ -210,7 +282,8 @@
          minValue: 0, 
          maxValue: 190,
          timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
       });
 
       $('#calories').newLineFromSheet({
@@ -223,7 +296,8 @@
          minValue: 0, 
          maxValue: 4000,
          timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
       });
 
       $('#fat').newLineFromSheet({
@@ -238,7 +312,8 @@
          minValue: 0, 
          maxValue: 175,
          timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
       });
 
       $('#avgMacronutrients').newDoughnutFromSheet({
@@ -249,7 +324,8 @@
          label3: 'Fat',
          valueColumn2: 3,
          valueColumn3: 4,
-         timeBlock: timeBlock
+         timeBlock: timeBlock,
+         chartOptions: chartOptions
       });
 
       $('#avgSleep').newStatFromSheet({
