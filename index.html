@@ -103,10 +103,9 @@
       var timeBlock = 0; 
       var timeBlockLength = 18; 
       var chartOptions = {};
-      var windowWidth;
       
    $(document).ready(function() {
-      windowWidth = $(window).width();
+      var windowWidth = $(window).width();
       function checkWidth() {
          if (state == 'year' && windowWidth < 1000) {
             $('.month').trigger('click');
@@ -114,7 +113,7 @@
          }
       }
 
-      checkWidth()
+      checkWidth();
 
       $(window).resize(checkWidth);
    
@@ -186,12 +185,6 @@
             $('.container').addClass('centered');
             width = 1000;
             timeBlockLength = 75;
-            break;
-         case 'mobile':
-            $('.container').addClass('centered');
-            timeBlockLength = 13;
-            width = $(document).width() - 25;
-            state = 'month';
             break;
          default:
             timeBlockLength = 18;
