@@ -1,394 +1,241 @@
-<html>
+<!DOCTYPE HTML>
 <head>
-<title>Health Data- Remington Breeze</title>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<link rel="stylesheet" href="style.css" type="text/css">
+  <link rel="stylesheet" href="style.css" type="text/css">
+  <link rel="stylesheet" href="chartist.min.css" type="text/css">
+  <meta name="viewport" content="width=device-width, initial-scale=.8, maximum-scale=1">
 </head>
-
+<html>
 <body>
 
-	<h1 class="header">
-		<a href="http://rbreeze.github.io/" target="_blank">Remington Breeze</a>
-	</h1>
+  <div class="modules-container">
+      <h1 class="name">Remington Breeze</h1>
+      <div class="1"></div>
+      <div class="2"></div>
+  </div>
+  
 
-	<div class="navigation">
-		<a class="back button">Back</a>
-		<a class="forward button">Forward</a>
-		<a class="week button">Week View</a>
-		<a class="month button">Month View</a>
-      <a class="year button">Year View</a>
-	</div>
+  <script src="http://code.jquery.com/jquery-latest.min.js"></script>
+  <script src="chartist.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/3.5.3/math.min.js"></script>
+  <script>
 
-	<div class="mileage container">
-		<h1>Miles- <span class="whichWeek">This Week</span></h1>
-		<canvas id="mileage" class="canvas"></canvas>
-	</div>
+    //Urls to Google Sheets where data is held
+    var morningUrl = "https://spreadsheets.google.com/tq?key=1fYj_mJEjc7ov_ALP-YOxcPDm_U5aRwg09-CU78Uo-fI&tqx=out:csv&callback=processData&sheet=sortedData"; 
+    var nightUrl = "https://spreadsheets.google.com/tq?key=1gZpe3gFUQ36xsDtZBNBlEBvNy718axyTfFg0d8R58Ik&tqx=out:csv&callback=processData&sheet=sortedData";
 
-   <div class="pace container">
-      <h1>Paces- <span class="whichWeek">This Week</span></h1>
-      <canvas id="pace" class="canvas"></canvas>
-   </div>
-
-	<div class="sleep container">
-		<h1>Sleep- <span class="whichWeek">This Week</span></h1>
-		<canvas id="sleep" class="canvas"></canvas>
-	</div>
-
-	<div class="water container">
-		<h1>Water- <span class="whichWeek">This Week</span></h1>
-		<canvas id="water" class="canvas"></canvas>
-	</div>
-
-	<div class="carbs container">
-		<h1>Carbs &amp; Sugar- <span class="whichWeek">This Week</span></h1>
-		<canvas id="carbs" class="canvas"></canvas>
-	</div>
-
-	<div class="fat container">
-		<h1>Fat &amp; SatFat- <span class="whichWeek">This Week</span></h1>
-		<canvas id="fat" class="canvas"></canvas>
-	</div>
-
-	<div class="protein container">
-		<h1>Protein- <span class="whichWeek">This Week</span></h1>
-		<canvas id="protein" class="canvas"></canvas>
-	</div>
-
-	<div class="calories container">
-		<h1>Calories- <span class="whichWeek">This Week</span></h1>
-		<canvas id="calories" class="canvas"></canvas>
-	</div>
-
-   <div class="avgMacronutrients container noYear">
-      <h1>Macronutrient Percentages- <span class="doughnutTime">Last Week</span></h1>
-      <canvas id="avgMacronutrients" class="canvas noYear"></canvas>
-   </div>
-
-	<div class="avgValues container noYear">
-		<h1> All Time Averages </h1>
-		<table>
-			<tr>
-				<td class="left">Sleep</td>
-				<td id="avgSleep"></td>
-			</tr>
-			<tr>
-				<td class="left">Sugar</td>
-				<td id="avgSugar"></td>
-			</tr>
-			<tr>
-				<td class="left">Calories</td>
-				<td id="avgCalories"></td>
-			</tr>
-			<tr>
-				<td class="left">Mileage</td>
-				<td id="avgMileage"></td>
-			</tr>
-			<tr>
-				<td class="left">Pace</td>
-				<td id="avgPace"></td>
-			</tr>
-		</table>
-	</div>
-
-   <div class="clear"></div>
-
-	<script src="http://code.jquery.com/jquery-latest.min.js"></script>
-	<script src="jquery-csv.min.js"></script>
-	<script src="Chart.min.js"></script>
-	<script src="chartData.js"></script>
-	<script src="sheetCharts.js"></script>
-    <script type="text/javascript">
-
-      var state = "month";
-      var timeBlock = 0; 
-      var timeBlockLength = 18; 
-      var chartOptions = {};
-      
-   $(document).ready(function() {
-      var windowWidth = $(window).width();
-      function checkWidth() {
-         if (state == 'year' && windowWidth < 1000) {
-            $('.month').trigger('click');
-            updateGraphs();
-         }
+    //returns the average of the array that is passed
+    function average(array) {
+      var total = 0; 
+      for (item in array) {
+        total += parseFloat(array[item]); 
       }
+      return total / array.length; 
+    }
 
-      checkWidth();
+    //converts duration to float
+    function timeStringToFloat(time) {
+      var hoursMinutes = time.split(/[.:]/);
+      var hours = parseInt(hoursMinutes[0], 10);
+      var minutes = hoursMinutes[1] ? parseInt(hoursMinutes[1], 10) : 0;
+      return hours + minutes / 60;
+    }
 
-      $(window).resize(checkWidth);
-   
-      $('.month').css('border', '2px solid #32BAF9');
+    //function that takes Google Sheets data rows and sorts them into an object containing Arrays for each column
+    function sortData(data) { 
+      var categories = new Array(); 
+      var sorted = {};
 
-         updateGraphs();
-
-         $('.back').click(function() {
-            timeBlock += 1;
-            updateGraphs();
-         });
-
-         $('.forward').click(function() {
-            timeBlock -= 1; 
-            updateGraphs();
-         });
-
-         $('.year').click(function() {
-            state = "year";
-            $('.year').css('border', '2px solid #32BAF9');
-            $('.month').css('border', '1px solid #BBBBBB');
-            $('.week').css('border', '1px solid #BBBBBB');
-            updateGraphs();
-         });
-
-         $('.month').click(function() {
-            state = "month";
-            $('.month').css('border', '2px solid #32BAF9');
-            $('.week').css('border', '1px solid #BBBBBB');
-            $('.year').css('border', '1px solid #BBBBBB');
-            updateGraphs();
-         });
-
-         $('.week').click(function() {
-            state = "week";
-            $('.week').css('border', '2px solid #32BAF9');
-            $('.month').css('border', '1px solid #BBBBBB');
-            $('.year').css('border', '1px solid #BBBBBB');
-            updateGraphs();
-         });
-         
-   }); 
-
-    function updateGraphs() {
-
-      $('.canvas').each(function() {
-         var parent = $(this).parent(); 
-         var id = $(this).attr('id');
-         this.remove();
-         parent.append('<canvas class="canvas" id="' + id + '"></canvas>');
-      });
-
-      var id = '1VdT0ZqbmH0D2vQS4ZS0nxKGiJesd8vCLM21Bs0r9mxc';
-      var defaultWidth = 500;
-      var width;
-
-      switch(state) {
-         case 'month': 
-            $('.container').removeClass('centered');
-            timeBlockLength = 30;
-            width = defaultWidth;
-            break;
-         case 'week':
-            $('.container').removeClass('centered');
-            timeBlockLength = 9;
-            width = defaultWidth;
-            break;
-         case 'year':
-            $('.container').addClass('centered');
-            width = 1000;
-            timeBlockLength = 75;
-            break;
-         default:
-            timeBlockLength = 18;
-            break;
-      }
-
-      $('.canvas').not('.noYear').css({ 'width' : width });
-      $('.container').not('.noYear').css({ 'width' : width });
-      $('.noYear').css({'width': defaultWidth});
-      $('#avgMacronutrients').css({'width': defaultWidth});
-      $('.noYear').removeClass('centered');
-
-      $('#mileage').newLineFromSheet({
-         color: 'red',
-         id: id, 
-         sheet: 'Mileage',
-         valueColumn: 1,
-         scaleOverride: true,
-         stepWidth: 1.5,
-         minValue: 0, 
-         maxValue: 13.5,
-         width: 1000,
-         timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#pace').newLineFromSheet({
-         color: 'blue',
-         id: id, 
-         sheet: 'Paces',
-         valueColumn: 3,
-         scaleOverride: true,
-         stepWidth: 1,
-         minValue: 2, 
-         maxValue: 8,
-         timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#sleep').newLineFromSheet({
-         color: 'orange',
-         id: id, 
-         sheet: 'Sleep',
-         scaleOverride: true,
-         stepWidth: 50,
-         minValue: 100, 
-         maxValue: 650,
-         timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#water').newLineFromSheet({
-         color: 'blue',
-         id: id, 
-         sheet: 'Water',
-         scaleOverride: true,
-         stepWidth: 8,
-         minValue: 0, 
-         maxValue: 124,
-         timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#carbs').newLineFromSheet({
-         color: 'green',
-         id: id, 
-         sheet: 'Macronutrients',
-         sheet2: 'Macronutrients',
-         valueColumn: 1,
-         valueColumn2: 2,
-         scaleOverride: false,
-         timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#protein').newLineFromSheet({
-         color: 'blue',
-         id: id, 
-         sheet: 'Macronutrients',
-         valueColumn: 3,
-         scaleOverride: true,
-         stepWidth: 15,
-         minValue: 0, 
-         maxValue: 190,
-         timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#calories').newLineFromSheet({
-         color: 'purple',
-         id: id, 
-         sheet: 'Macronutrients',
-         valueColumn: 6,
-         scaleOverride: true,
-         stepWidth: 250,
-         minValue: 0, 
-         maxValue: 4000,
-         timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#fat').newLineFromSheet({
-         color: 'red',
-         id: id, 
-         sheet: 'Macronutrients',
-         sheet2: 'Macronutrients',
-         valueColumn: 4,
-         valueColumn2: 5,
-         scaleOverride: true,
-         stepWidth: 15,
-         minValue: 0, 
-         maxValue: 175,
-         timeBlockLength: timeBlockLength, 
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#avgMacronutrients').newDoughnutFromSheet({
-         id: id,
-         sheet: 'avgMacronutrients',
-         label1: 'Carbs',
-         label2: 'Protein',
-         label3: 'Fat',
-         valueColumn2: 3,
-         valueColumn3: 4,
-         timeBlock: timeBlock,
-         chartOptions: chartOptions
-      });
-
-      $('#avgSleep').newStatFromSheet({
-         id: id,
-         sheet: 'avgValues',
-         valueRow: 1,
-         label: 'minutes'
-      });
-
-      $('#avgSugar').newStatFromSheet({
-         id: id, 
-         sheet: 'avgValues',
-         valueRow: 2, 
-         label: 'grams'
-      });
-
-      $('#avgCalories').newStatFromSheet({
-         id: id, 
-         sheet: 'avgValues',
-         valueRow: 3, 
-         label: 'KCal'
-      });
-
-      $('#avgMileage').newStatFromSheet({
-         id: id, 
-         sheet: 'avgValues',
-         valueRow: 4, 
-         label: 'miles'
-      });
-
-      $('#avgPace').newStatFromSheet({
-         id: id, 
-         sheet: 'avgValues',
-         valueRow: 5, 
-         label: 'min/mile'
-      });
-
-      switch(timeBlock) {
-         case 0:
-            $('.whichWeek').html('This '+state);
-            $('.doughnutTime').html('Last week');
-            break;
-         case 1:
-            $('.whichWeek').html('Last '+state);
-            $('.doughnutTime').html('2 weeks Ago');
-            break;
-         default: 
-            $('.whichWeek').html(timeBlock +" "+ state +'s Ago');
-            $('.doughnutTime').html(timeBlock +' weeks Ago')
-      } 
-
-      switch (state) {
-         case 'week': 
-            if (timeBlock <= 0) {
-               $('.forward').hide();
+      var i = 0; 
+        for (category in data[0]) {
+          categories[i] = data[0][category];
+          i++;
+        }
+        var j = 0; 
+        for (row in data) {
+          sorted[categories[j]] = new Array();
+          j++;
+        }
+        var l = 0; 
+        for (row in data) {
+          var k = 0; 
+          for (column in data[row]) {
+            if (data[row][column] != null && data[row][column] != 0) {
+              sorted[categories[k]][l] = data[row][column];
             } else {
-               $('.forward').show();
+              sorted[categories[k]][l] = 0;
             }
-            break;
-         case 'month':
-            if (timeBlock <= 0) {
-               $('.forward').hide();
-            } else {
-               $('.forward').show();
-            }
-            break;
+            k++;
+          }
+          l++;
+        }
+        return sorted;
+    }
+
+    //appends a Chartist Line to the body with the ID that is passed to the function
+    function createModule(unescapedID, data, order, unit, options) {
+
+      var id = unescapedID.replace(/[^A-Z0-9]+/ig, "_");
+
+      // ** NOTE ** 
+      // This function assumes that data is an unformatted array, not a Javascript object formatted for Chartist.
+      // The first item of this array should be a label.
+
+      //save the first item and then remove it
+      var label = data[0];
+      data.shift(); 
+
+      //if the user didn't pass a unit, assume it is grams
+      if (!unit) {
+        unit = "G";
       }
 
-   } 
-    </script>
+      //Create the div to hold the module
+      var $module = $("<div>", {id: id, "class": "module"});
+      $('.' + order).append($module);
+
+      //create the header
+      var $header = $("<div>", {"class": "header"});
+        var $small = $("<div>", {"class": "small-text"}); 
+        var $h1 = $("<h1>");
+      $h1.append(label);
+      $small.append("This Month");
+      $header.append($small);
+      $header.append($h1);
+      $('#' + id).append($header); 
+
+      //create the chart container 
+      var $chart = $("<div>", {"id": id + "-chart","class": "chart"});
+      $('#' + id).append($chart); 
+
+      //calculate some useful metrics
+      var avg = Math.round(average(data)*100)/100;
+      var min = Math.min(...data);
+      var max = Math.max(...data);
+
+      //create the footer
+      var $footer = $("<div>", {"class": "footer"});  
+
+        //create the left data
+        var $left = $("<div>", {"class": "left"});
+
+          //light text on the left
+          var $light = $("<div>", {"class": "light-text"});
+          $light.append("Average");
+
+          //create data on the right
+          var $data = $("<div>", {"class": "footer-data"}); 
+            var $top = $("<div>", {"class": "top-data"});
+            var $red = $("<div>", {"class": "small-text"});
+            $top.append(avg + " " + unit);
+            $red.append("StdDev: " + Math.round(math.std(data)));
+
+          //append to div
+          $data.append($top);
+          $data.append($red); 
+
+          //append all to left box
+          $left.append($light); 
+          $left.append($data); 
+
+        //create the right data
+        var $right = $("<div>", {"class": "right"});
+
+          //create data container
+          var $container = $("<div>", {"class": "data-container"});
+            var $redData = $("<div>", {"class": "red-data"}); 
+
+          //set up second data container
+          $redData.append(max + " " + unit);
+          $container.append("Max"); 
+          $container.append($redData);
+
+        //append two identical containers into the right box
+        $right.append($container);
+        $right.append($container.clone());
+
+          //edit the original to create the first container
+            $redData.html(min + " " + unit);
+            $container.html("Min");
+            $container.append($redData);
+
+        //append left and right to footer
+        $footer.append($left); 
+        $footer.append($right);
+
+      $('#' + id).append($footer); 
+
+      //if the user doesn't pass any options, use these default ones
+      if (!options) {
+        options = {
+          stretch: true, 
+          fullWidth: true,
+          axisX: {
+            showLabel: false,
+            offset: 0
+          }, 
+          axisY: {
+            offset: 25
+          },
+          chartPadding: {
+            top: 20,
+            bottom: 8,
+            left: 13, 
+            right: 13
+          }
+        }
+      }
+
+      var formattedData = {
+        series: [data]
+      }
+
+      Chartist.Line("#" + id + "-chart", formattedData, options);
+
+    }
+
+    //function for grabbing data from google sheet
+    function getData(url, order) {
+      var sheetData; 
+      $.ajax({
+        // Call Yahoo query API 
+        url: 'http://query.yahooapis.com/v1/public/yql', 
+        dataType: "jsonp",
+        data: { 
+          q: "select * from csv(0, 20) where url='" + url + "'",
+          format: 'json'
+        },
+        success: function(data) {
+          //Upon success, sort the data into an object
+          sheetData = sortData(data.query.results.row);
+
+          //Get rid of ungraphable arrays
+          delete sheetData.undefined;
+          var timeStamps = sheetData.Timestamp;
+          delete sheetData.Timestamp;
+          delete sheetData.Time;
+
+          //convert sleep durations to a decimal
+          if(sheetData.Sleep) {
+            for (i in sheetData.Sleep) {
+              if (i != 0 && sheetData.Sleep[i] != null && sheetData.Sleep[i] != 0) {
+                sheetData.Sleep[i] = Math.round(timeStringToFloat(sheetData.Sleep[i])*100) / 100;
+              }
+            }
+          }
+
+          //Create a chart for each category
+          for (category in sheetData) {
+            createModule(sheetData[category][0], sheetData[category], order);
+          }
+
+        }
+      }); 
+    }
+
+    getData(morningUrl, 2); 
+    getData(nightUrl, 1);
+
+  </script>
+
 </body>
 </html>
-

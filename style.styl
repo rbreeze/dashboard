@@ -1,0 +1,199 @@
+@font-face
+  src: url("Prometo.ttf")
+  font-family: "Prometo"
+
+@font-face
+  src: url("Prometo-Light.ttf")
+  font-family: "Prometo Light"
+  
+light-background = rgba(26, 170, 171, .10)
+light-text = rgba(211, 243, 242, .64)
+bright-blue = #2EFEFF
+ui-red = #FF5A5A
+darker-blue-background = rgba(26, 170, 171, .22)
+blue-border = 2px solid bright-blue
+
+module-height = 325px
+header-height = 60px
+footer-height = 60px
+module-width = 400px
+
+::selection 
+  background: darker-blue-background
+
+body
+  font-family: "Prometo"
+  text-transform: uppercase
+  background: RGB(38, 38, 38)
+  color: white
+  position: relative
+  margin-left: 100px;
+  margin-top: 35px;
+  
+.modules-container
+  width: 2 * module-width + 100
+  position: relative
+  margin: 0 auto;
+  
+h1.name
+  display: block
+  margin: 0
+  padding: 0
+  color: white
+  font-size: 35px
+  font-family: "Prometo Light"
+  position: absolute
+  top: 175px
+  left: -245px
+  padding-left: 60px
+  border-bottom: 1px solid white
+  transform: rotate(270deg)
+
+.module
+  width: module-width 
+  height: module-height
+  position: relative
+  display: inline-block
+  vertical-align: top
+  border: 2px solid #2EFEFF
+  text-transform: uppercase
+  margin-right: 25px
+  margin-bottom: 31px
+  
+  .small-text
+    font-size: 13px
+    color: ui-red
+  
+  .header, .footer 
+    background-color: light-background
+    
+  .header 
+    height: header-height
+    width: 100%
+    padding-top: 10px
+    border-bottom: 2px solid bright-blue
+      
+    h1
+      font-size: 25px
+      margin: 0
+      padding: 0
+      
+    h1, .small-text 
+      margin-left: 10px
+
+  .footer 
+    position: absolute
+    width: 100%
+    text-transform: uppercase
+    bottom: 0; 
+    height: footer-height 
+    border-top: 2px solid bright-blue
+
+    .left, .right 
+      display: inline-block
+      
+    right-width = 150px
+    
+    .left
+      width: module-width - right-width
+      height: 100%
+      
+      .light-text
+        margin-top: 8px
+        margin-left: 13px 
+        font-size: 22px
+        color: light-text
+      
+      .footer-data
+        text-align: right
+        margin-top: 3px
+        position: absolute
+        right: right-width + 20
+        top: 5px
+        
+        .top-data
+          font-size: 20px
+          color: bright-blue
+
+    .right
+      width: right-width
+      height: 100%
+      color: white
+      position: absolute
+      right: 0
+      top: 0
+      border-left: blue-border
+      
+      .data-container
+        margin-top: 10px
+        margin-left: 13px
+        font-size: 16px
+        color: white
+        width: 100%
+        line-height: 15px
+        .red-data
+          font-size: 18px
+          color: ui-red
+          display: inline-block
+          position: absolute
+          right: 20px
+          text-align: right
+          
+@media screen and (min-width: 3 * module-width + 200)
+  .modules-container
+    width: (module-width * 3) + 100px
+    
+switch-point = 200
+          
+@media screen and (max-width: 2 * module-width + switch-point)
+  .modules-container
+    width: module-width + 50px
+
+@media screen and (max-width: 2 * module-width + (switch-point - 1))
+  h1.name
+    position: static
+    padding-left: 7px
+    padding-right: 35px
+    text-align: left
+    font-size: 35px
+    margin-left: 7%
+    margin-bottom: 30px
+    width: 40%
+    transform: none
+    display: block
+  body
+    margin-left: 0px
+  .modules-container
+    width: 100%
+  .module
+    width: 90%
+    display: block
+    margin-left: auto
+    margin-right: auto
+    .light-text
+      margin-top: 9px !important
+      font-size: 15px !important
+  .left
+    width: 65%
+  .right
+    width: 35%
+
+.chart 
+  height: module-height - header-height - footer-height - 20
+  margin: 0 auto
+  
+.ct-line, .ct-point
+  stroke: bright-blue !important
+  
+.ct-line 
+  stroke-width: 2px !important
+  
+.ct-point 
+  stroke-width: 7px !important
+
+.ct-label
+  color: rgba(255,255,255,.5) !important
+  
+.ct-grids *
+  stroke: darker-blue-background !important
+  stroke-dasharray: 0px !important

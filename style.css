@@ -1,121 +1,198 @@
 @font-face {
-	src: url('avenirnext.otf');
-	font-family: 'Avenir Next';
+  src: url("Prometo.ttf");
+  font-family: "Prometo";
 }
-
-html {
-	background: #454545;
+@font-face {
+  src: url("Prometo-Light.ttf");
+  font-family: "Prometo Light";
 }
-
+::selection {
+  background: rgba(26,170,171,0.22);
+}
 body {
-	text-align: center;
+  font-family: "Prometo";
+  text-transform: uppercase;
+  background: RGB(38, 38, 38);
+  color: #fff;
+  position: relative;
+  margin-left: 100px;
+  margin-top: 35px;
 }
-
-h1, a {
-	font-family: 'Avenir Next';
-	color: #282828;
+.modules-container {
+  width: 900px;
+  position: relative;
+  margin: 0 auto;
 }
-
-h1 {
-	font-weight: 400;
-	text-align: center;
-	padding-top: 20px;
+h1.name {
+  display: block;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  font-size: 35px;
+  font-family: "Prometo Light";
+  position: absolute;
+  top: 175px;
+  left: -245px;
+  padding-left: 60px;
+  border-bottom: 1px solid #fff;
+  transform: rotate(270deg);
 }
-
-h1.header {
-	margin: 5px;	
+.module {
+  width: 400px;
+  height: 325px;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  border: 2px solid #2efeff;
+  text-transform: uppercase;
+  margin-right: 25px;
+  margin-bottom: 31px;
 }
-
-h1.header a {
-	color: #fff;
-	font-family: 'Avenir Next';
-	font-size: 45px;
-	font-weight: none;
-	text-decoration: none;
+.module .small-text {
+  font-size: 13px;
+  color: #ff5a5a;
 }
-
-.navigation {
-	margin: 0 auto;
-	margin-top: 20px;
-	text-align: center;
+.module .header,
+.module .footer {
+  background-color: rgba(26,170,171,0.1);
 }
-
-a.button {
-	background: #fff;
-	border: 1px solid #BBBBBB;	
-	padding: 5px;
-	margin: 5px;
-	padding-top: 8px;
-	font-weight: 400;
-	display: inline-block;
+.module .header {
+  height: 60px;
+  width: 100%;
+  padding-top: 10px;
+  border-bottom: 2px solid #2efeff;
 }
-
-.container {
-	background: #F6F6F6;
-	display: inline-block;	
-	margin: 15px;
-	width: 450px;
-	height: 395px;
-	padding: 15px;
-	padding-top: 0px;
-	box-shadow: 0px 2px 5px 0px rgba(32,32,32,0.6);
+.module .header h1 {
+  font-size: 25px;
+  margin: 0;
+  padding: 0;
 }
-
-.doughnut {
-	height: 230px !important;
-	margin-bottom: 27px;
+.module .header h1,
+.module .header .small-text {
+  margin-left: 10px;
 }
-
-table {
-	font-size: 20px;
-	padding: 0;
-	margin: 0 auto;
-	font-family: 'Avenir Next';
-	border-collapse: collapse;
+.module .footer {
+  position: absolute;
+  width: 100%;
+  text-transform: uppercase;
+  bottom: 0;
+  height: 60px;
+  border-top: 2px solid #2efeff;
 }
-
-td {
-	padding: 13px;
+.module .footer .left,
+.module .footer .right {
+  display: inline-block;
 }
-
-td.left {
-	text-align: right;
-	border-right: 1px solid #222;
+.module .footer .left {
+  width: 250px;
+  height: 100%;
 }
-
-@media screen and (max-width: 1030px) {
-	.container {
-		display: block;
-		float: none;
-		margin: 0 auto;
-	}
+.module .footer .left .light-text {
+  margin-top: 8px;
+  margin-left: 13px;
+  font-size: 22px;
+  color: rgba(211,243,242,0.64);
 }
-
-.avgValues {
-	vertical-align: top;
+.module .footer .left .footer-data {
+  text-align: right;
+  margin-top: 3px;
+  position: absolute;
+  right: 170px;
+  top: 5px;
 }
-
-.canvas {
-	width: 450px;
-	height: 300px;
+.module .footer .left .footer-data .top-data {
+  font-size: 20px;
+  color: #2efeff;
 }
-
-.mobile {
-	width: 100%;
-	font-size: 25px;
+.module .footer .right {
+  width: 150px;
+  height: 100%;
+  color: #fff;
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-left: 2px solid #2efeff;
 }
-
-.clear {
-	clear: both;
+.module .footer .right .data-container {
+  margin-top: 10px;
+  margin-left: 13px;
+  font-size: 16px;
+  color: #fff;
+  width: 100%;
+  line-height: 15px;
 }
-
-.noYear {
-	display: inline-block;
-	margin-top: 20px;
+.module .footer .right .data-container .red-data {
+  font-size: 18px;
+  color: #ff5a5a;
+  display: inline-block;
+  position: absolute;
+  right: 20px;
+  text-align: right;
 }
-
-.centered {
-	display: block;
-	float: none;
-	margin: 0 auto;
+@media screen and (min-width: 1400px) {
+  .modules-container {
+    width: 1300px;
+  }
+}
+@media screen and (max-width: 1000px) {
+  .modules-container {
+    width: 450px;
+  }
+}
+@media screen and (max-width: 999px) {
+  h1.name {
+    position: static;
+    padding-left: 7px;
+    padding-right: 35px;
+    text-align: left;
+    font-size: 35px;
+    margin-left: 7%;
+    margin-bottom: 30px;
+    width: 40%;
+    transform: none;
+    display: block;
+  }
+  body {
+    margin-left: 0px;
+  }
+  .modules-container {
+    width: 100%;
+  }
+  .module {
+    width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .module .light-text {
+    margin-top: 9px !important;
+    font-size: 15px !important;
+  }
+  .left {
+    width: 65%;
+  }
+  .right {
+    width: 35%;
+  }
+}
+.chart {
+  height: 185px;
+  margin: 0 auto;
+}
+.ct-line,
+.ct-point {
+  stroke: #2efeff !important;
+}
+.ct-line {
+  stroke-width: 2px !important;
+}
+.ct-point {
+  stroke-width: 7px !important;
+}
+.ct-label {
+  color: rgba(255,255,255,0.5) !important;
+}
+.ct-grids * {
+  stroke: rgba(26,170,171,0.22) !important;
+  stroke-dasharray: 0px !important;
 }
