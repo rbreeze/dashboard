@@ -1,5 +1,6 @@
 <!DOCTYPE HTML>
 <head>
+  <title> Health Data - Remington Breeze </title>
   <link rel="stylesheet" href="style.css" type="text/css">
   <link rel="stylesheet" href="chartist.min.css" type="text/css">
   <meta name="viewport" content="width=device-width, initial-scale=.85, maximum-scale=1">
@@ -22,6 +23,20 @@
     //Urls to Google Sheets where data is held
     var morningUrl = "https://spreadsheets.google.com/tq?key=1fYj_mJEjc7ov_ALP-YOxcPDm_U5aRwg09-CU78Uo-fI&tqx=out:csv&callback=processData&sheet=sortedData"; 
     var nightUrl = "https://spreadsheets.google.com/tq?key=1gZpe3gFUQ36xsDtZBNBlEBvNy718axyTfFg0d8R58Ik&tqx=out:csv&callback=processData&sheet=sortedData";
+
+    //units for each type of data 
+    var units = {
+      "Sleep": "hrs",
+      "Weight": "lbs",
+      "Body Fat %": "%",
+      "Muscle %": "%",
+      "Water Weight %": "%",
+      "Bone %": "%",
+      "Heart Rate": "bpm",
+      "Mileage": "mi", 
+      "Water": "oz", 
+      "Calories": "cal"
+    }
 
     //returns the average of the array that is passed
     function average(array) {
@@ -84,10 +99,18 @@
       var label = data[0];
       data.shift(); 
 
+      //reverse the data because it is in backwards order
+      data.reverse(); 
+
+      //delete zero values
+      data = data.filter(function(val) {
+        return val !== 0; 
+      });
+
       //if the user didn't pass a unit, assume it is grams
       if (!unit) {
         unit = "G";
-      }
+      } 
 
       //Create the div to hold the module
       var $module = $("<div>", {id: id, "class": "module"});
@@ -167,6 +190,8 @@
       //if the user doesn't pass any options, use these default ones
       if (!options) {
         options = {
+          high: max, 
+          low: min - (min * .35), 
           stretch: true, 
           fullWidth: true,
           axisX: {
@@ -225,7 +250,7 @@
 
           //Create a chart for each category
           for (category in sheetData) {
-            createModule(sheetData[category][0], sheetData[category], order);
+            createModule(sheetData[category][0], sheetData[category], order, units[sheetData[category][0]]);
           }
 
         }
