@@ -11,9 +11,8 @@
   <div class="modules-container">
       <h1 class="name">Remington Breeze</h1>
       <div class="1"></div>
-      <div class="2"></div>
   </div>
-  
+
 
   <script src="http://code.jquery.com/jquery-latest.min.js"></script>
   <script src="chartist.min.js"></script>
@@ -21,10 +20,9 @@
   <script>
 
     //Urls to Google Sheets where data is held
-    var morningUrl = "https://spreadsheets.google.com/tq?key=1fYj_mJEjc7ov_ALP-YOxcPDm_U5aRwg09-CU78Uo-fI&tqx=out:csv&callback=processData&sheet=sortedData"; 
     var nightUrl = "https://spreadsheets.google.com/tq?key=1gZpe3gFUQ36xsDtZBNBlEBvNy718axyTfFg0d8R58Ik&tqx=out:csv&callback=processData&sheet=sortedData";
 
-    //units for each type of data 
+    //units for each type of data
     var units = {
       "Sleep": "hrs",
       "Weight": "lbs",
@@ -33,18 +31,18 @@
       "Water Weight %": "%",
       "Bone %": "%",
       "Heart Rate": "bpm",
-      "Mileage": "mi", 
-      "Water": "oz", 
+      "Mileage": "mi",
+      "Water": "oz",
       "Calories": "cal"
     }
 
     //returns the average of the array that is passed
     function average(array) {
-      var total = 0; 
+      var total = 0;
       for (item in array) {
-        total += parseFloat(array[item]); 
+        total += parseFloat(array[item]);
       }
-      return total / array.length; 
+      return total / array.length;
     }
 
     //converts duration to float
@@ -56,23 +54,23 @@
     }
 
     //function that takes Google Sheets data rows and sorts them into an object containing Arrays for each column
-    function sortData(data) { 
-      var categories = new Array(); 
+    function sortData(data) {
+      var categories = new Array();
       var sorted = {};
 
-      var i = 0; 
+      var i = 0;
         for (category in data[0]) {
           categories[i] = data[0][category];
           i++;
         }
-        var j = 0; 
+        var j = 0;
         for (row in data) {
           sorted[categories[j]] = new Array();
           j++;
         }
-        var l = 0; 
+        var l = 0;
         for (row in data) {
-          var k = 0; 
+          var k = 0;
           for (column in data[row]) {
             if (data[row][column] != null && data[row][column] != 0) {
               sorted[categories[k]][l] = data[row][column];
@@ -91,26 +89,26 @@
 
       var id = unescapedID.replace(/[^A-Z0-9]+/ig, "_");
 
-      // ** NOTE ** 
+      // ** NOTE **
       // This function assumes that data is an unformatted array, not a Javascript object formatted for Chartist.
       // The first item of this array should be a label.
 
       //save the first item and then remove it
       var label = data[0];
-      data.shift(); 
+      data.shift();
 
       //reverse the data because it is in backwards order
-      data.reverse(); 
+      data.reverse();
 
       //delete zero values
       data = data.filter(function(val) {
-        return val !== 0; 
+        return val !== 0;
       });
 
       //if the user didn't pass a unit, assume it is grams
       if (!unit) {
         unit = "G";
-      } 
+      }
 
       //Create the div to hold the module
       var $module = $("<div>", {id: id, "class": "module"});
@@ -118,17 +116,17 @@
 
       //create the header
       var $header = $("<div>", {"class": "header"});
-        var $small = $("<div>", {"class": "small-text"}); 
+        var $small = $("<div>", {"class": "small-text"});
         var $h1 = $("<h1>");
       $h1.append(label);
       $small.append("This Month");
       $header.append($small);
       $header.append($h1);
-      $('#' + id).append($header); 
+      $('#' + id).append($header);
 
-      //create the chart container 
+      //create the chart container
       var $chart = $("<div>", {"id": id + "-chart","class": "chart"});
-      $('#' + id).append($chart); 
+      $('#' + id).append($chart);
 
       //calculate some useful metrics
       var avg = Math.round(average(data)*100)/100;
@@ -136,7 +134,7 @@
       var max = Math.max(...data);
 
       //create the footer
-      var $footer = $("<div>", {"class": "footer"});  
+      var $footer = $("<div>", {"class": "footer"});
 
         //create the left data
         var $left = $("<div>", {"class": "left"});
@@ -146,7 +144,7 @@
           $light.append("Average");
 
           //create data on the right
-          var $data = $("<div>", {"class": "footer-data"}); 
+          var $data = $("<div>", {"class": "footer-data"});
             var $top = $("<div>", {"class": "top-data"});
             var $red = $("<div>", {"class": "small-text"});
             $top.append(avg + " " + unit);
@@ -154,22 +152,22 @@
 
           //append to div
           $data.append($top);
-          $data.append($red); 
+          $data.append($red);
 
           //append all to left box
-          $left.append($light); 
-          $left.append($data); 
+          $left.append($light);
+          $left.append($data);
 
         //create the right data
         var $right = $("<div>", {"class": "right"});
 
           //create data container
           var $container = $("<div>", {"class": "data-container"});
-            var $redData = $("<div>", {"class": "red-data"}); 
+            var $redData = $("<div>", {"class": "red-data"});
 
           //set up second data container
           $redData.append(max + " " + unit);
-          $container.append("Max"); 
+          $container.append("Max");
           $container.append($redData);
 
         //append two identical containers into the right box
@@ -182,29 +180,29 @@
             $container.append($redData);
 
         //append left and right to footer
-        $footer.append($left); 
+        $footer.append($left);
         $footer.append($right);
 
-      $('#' + id).append($footer); 
+      $('#' + id).append($footer);
 
       //if the user doesn't pass any options, use these default ones
       if (!options) {
         options = {
-          high: max, 
-          low: min - (min * .35), 
-          stretch: true, 
+          high: max,
+          low: min - (min * .35),
+          stretch: true,
           fullWidth: true,
           axisX: {
             showLabel: false,
             offset: 0
-          }, 
+          },
           axisY: {
             offset: 25
           },
           chartPadding: {
             top: 20,
             bottom: 8,
-            left: 13, 
+            left: 13,
             right: 13
           }
         }
@@ -220,12 +218,12 @@
 
     //function for grabbing data from google sheet
     function getData(url, order) {
-      var sheetData; 
+      var sheetData;
       $.ajax({
-        // Call Yahoo query API 
-        url: 'http://query.yahooapis.com/v1/public/yql', 
+        // Call Yahoo query API
+        url: 'http://query.yahooapis.com/v1/public/yql',
         dataType: "jsonp",
-        data: { 
+        data: {
           q: "select * from csv(0, 20) where url='" + url + "'",
           format: 'json'
         },
@@ -254,10 +252,9 @@
           }
 
         }
-      }); 
+      });
     }
 
-    getData(morningUrl, 2); 
     getData(nightUrl, 1);
 
   </script>
