@@ -1,0 +1,198 @@
+@font-face {
+  src: url("Prometo.ttf");
+  font-family: "Prometo";
+}
+@font-face {
+  src: url("Prometo-Light.ttf");
+  font-family: "Prometo Light";
+}
+::selection {
+  background: rgba(26,170,171,0.22);
+}
+body {
+  font-family: "Prometo";
+  text-transform: uppercase;
+  background: RGB(25, 25, 25);
+  color: #fff;
+  position: relative;
+  margin-left: 100px;
+  margin-top: 35px;
+}
+.modules-container {
+  width: 900px;
+  position: relative;
+  margin: 0 auto;
+}
+h1.name {
+  display: block;
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  font-size: 35px;
+  font-family: "Prometo Light";
+  position: absolute;
+  top: 175px;
+  left: -245px;
+  padding-left: 60px;
+  border-bottom: 1px solid #fff;
+  transform: rotate(270deg);
+}
+.module {
+  width: 400px;
+  height: 325px;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  border: 2px solid #2efeff;
+  text-transform: uppercase;
+  margin-right: 25px;
+  margin-bottom: 31px;
+}
+.module .small-text {
+  font-size: 13px;
+  color: #ff5a5a;
+}
+.module .header,
+.module .footer {
+  background-color: rgba(26,170,171,0.1);
+}
+.module .header {
+  height: 60px;
+  width: 100%;
+  padding-top: 10px;
+  border-bottom: 2px solid #2efeff;
+}
+.module .header h1 {
+  font-size: 25px;
+  margin: 0;
+  padding: 0;
+}
+.module .header h1,
+.module .header .small-text {
+  margin-left: 10px;
+}
+.module .footer {
+  position: absolute;
+  width: 100%;
+  text-transform: uppercase;
+  bottom: 0;
+  height: 60px;
+  border-top: 2px solid #2efeff;
+}
+.module .footer .left,
+.module .footer .right {
+  display: inline-block;
+}
+.module .footer .left {
+  width: 250px;
+  height: 100%;
+}
+.module .footer .left .light-text {
+  margin-top: 8px;
+  margin-left: 13px;
+  font-size: 22px;
+  color: rgba(211,243,242,0.64);
+}
+.module .footer .left .footer-data {
+  text-align: right;
+  margin-top: 3px;
+  position: absolute;
+  right: 170px;
+  top: 5px;
+}
+.module .footer .left .footer-data .top-data {
+  font-size: 20px;
+  color: #2efeff;
+}
+.module .footer .right {
+  width: 150px;
+  height: 100%;
+  color: #fff;
+  position: absolute;
+  right: 0;
+  top: 0;
+  border-left: 2px solid #2efeff;
+}
+.module .footer .right .data-container {
+  margin-top: 10px;
+  margin-left: 13px;
+  font-size: 16px;
+  color: #fff;
+  width: 100%;
+  line-height: 15px;
+}
+.module .footer .right .data-container .red-data {
+  font-size: 18px;
+  color: #ff5a5a;
+  display: inline-block;
+  position: absolute;
+  right: 20px;
+  text-align: right;
+}
+@media screen and (min-width: 1400px) {
+  .modules-container {
+    width: 1300px;
+  }
+}
+@media screen and (max-width: 1000px) {
+  .modules-container {
+    width: 450px;
+  }
+}
+@media screen and (max-width: 999px) {
+  h1.name {
+    position: static;
+    padding-left: 7px;
+    padding-right: 35px;
+    text-align: left;
+    font-size: 35px;
+    margin-left: 7%;
+    margin-bottom: 30px;
+    width: 40%;
+    transform: none;
+    display: block;
+  }
+  body {
+    margin-left: 0px;
+  }
+  .modules-container {
+    width: 100%;
+  }
+  .module {
+    width: 90%;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+  .module .light-text {
+    margin-top: 9px !important;
+    font-size: 15px !important;
+  }
+  .left {
+    width: 65%;
+  }
+  .right {
+    width: 35%;
+  }
+}
+.chart {
+  height: 185px;
+  margin: 0 auto;
+}
+.ct-line,
+.ct-point {
+  stroke: #2efeff !important;
+}
+.ct-line {
+  stroke-width: 2px !important;
+}
+.ct-point {
+  stroke-width: 7px !important;
+}
+.ct-label {
+  color: rgba(255,255,255,0.5) !important;
+}
+.ct-grids * {
+  stroke: rgba(26,170,171,0.22) !important;
+  stroke-dasharray: 0px !important;
+}

@@ -3,13 +3,15 @@
   <title> Health Data - Remington Breeze </title>
   <link rel="stylesheet" href="style.css" type="text/css">
   <link rel="stylesheet" href="chartist.min.css" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Noto+Sans" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=.85, maximum-scale=1">
 </head>
 <html>
 <body>
+  <h1 class="name">Health Data</h1><h2>Remington Breeze</h2>
 
   <div class="modules-container">
-      <h1 class="name">Remington Breeze</h1>
       <div class="1"></div>
   </div>
 
@@ -59,29 +61,29 @@
       var sorted = {};
 
       var i = 0;
-        for (category in data[0]) {
-          categories[i] = data[0][category];
-          i++;
-        }
-        var j = 0;
-        for (row in data) {
-          sorted[categories[j]] = new Array();
-          j++;
-        }
-        var l = 0;
-        for (row in data) {
-          var k = 0;
-          for (column in data[row]) {
-            if (data[row][column] != null && data[row][column] != 0) {
-              sorted[categories[k]][l] = data[row][column];
-            } else {
-              sorted[categories[k]][l] = 0;
-            }
-            k++;
+      for (category in data[0]) {
+        categories[i] = data[0][category];
+        i++;
+      }
+      var j = 0;
+      for (column in data[0]) {
+        sorted[categories[j]] = new Array();
+        j++;
+      }
+      var l = 0;
+      for (row in data) {
+        var k = 0;
+        for (column in data[row]) {
+          if (data[row][column] != null && data[row][column] != 0 && typeof data[row][column] !== 'undefined') {
+            sorted[categories[k]][l] = data[row][column];
+          } else {
+            sorted[categories[k]][l] = 0;
           }
-          l++;
+          k++;
         }
-        return sorted;
+        l++;
+      }
+      return sorted;
     }
 
     //appends a Chartist Line to the body with the ID that is passed to the function
@@ -120,8 +122,8 @@
         var $h1 = $("<h1>");
       $h1.append(label);
       $small.append("This Month");
-      $header.append($small);
       $header.append($h1);
+      $header.append($small);
       $('#' + id).append($header);
 
       //create the chart container
@@ -136,52 +138,27 @@
       //create the footer
       var $footer = $("<div>", {"class": "footer"});
 
-        //create the left data
-        var $left = $("<div>", {"class": "left"});
+      var $avg = $("<div>", {"class": "avg container"});
+      var $label = $("<div>", {"class": "label"});
+      $label.append("Average");
+      $avg.append($label)
+      $avg.append(avg + " " + unit);
 
-          //light text on the left
-          var $light = $("<div>", {"class": "light-text"});
-          $light.append("Average");
+      var $max = $("<div>", {"class": "max container"});
+      var $label = $("<div>", {"class": "label"});
+      $label.append("Max");
+      $max.append($label)
+      $max.append(max + " " + unit);
 
-          //create data on the right
-          var $data = $("<div>", {"class": "footer-data"});
-            var $top = $("<div>", {"class": "top-data"});
-            var $red = $("<div>", {"class": "small-text"});
-            $top.append(avg + " " + unit);
-            $red.append("StdDev: " + Math.round(math.std(data)));
+      var $min = $("<div>", {"class": "min container"});
+      var $label = $("<div>", {"class": "label"});
+      $label.append("Min");
+      $min.append($label)
+      $min.append(min + " " + unit);
 
-          //append to div
-          $data.append($top);
-          $data.append($red);
-
-          //append all to left box
-          $left.append($light);
-          $left.append($data);
-
-        //create the right data
-        var $right = $("<div>", {"class": "right"});
-
-          //create data container
-          var $container = $("<div>", {"class": "data-container"});
-            var $redData = $("<div>", {"class": "red-data"});
-
-          //set up second data container
-          $redData.append(max + " " + unit);
-          $container.append("Max");
-          $container.append($redData);
-
-        //append two identical containers into the right box
-        $right.append($container);
-        $right.append($container.clone());
-
-          //edit the original to create the first container
-            $redData.html(min + " " + unit);
-            $container.html("Min");
-            $container.append($redData);
-
-        //append left and right to footer
-        $footer.append($left);
-        $footer.append($right);
+      $footer.append($avg);
+      $footer.append($max);
+      $footer.append($min);
 
       $('#' + id).append($footer);
 

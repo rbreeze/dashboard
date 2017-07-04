@@ -1,166 +1,145 @@
-@font-face
-  src: url("Prometo.ttf")
-  font-family: "Prometo"
+// out: style.css, compress: true
 
-@font-face
-  src: url("Prometo-Light.ttf")
-  font-family: "Prometo Light"
-  
-light-background = rgba(26, 170, 171, .10)
-light-text = rgba(211, 243, 242, .64)
-bright-blue = #2EFEFF
-ui-red = #FF5A5A
+light-background = rgba(34, 194, 255, 0.08)
+light-text = rgba(53, 92, 111, 0.89)
+bright-blue = #8c9c9c
+ui-red = #be2222
 darker-blue-background = rgba(26, 170, 171, .22)
-blue-border = 2px solid bright-blue
 
-module-height = 325px
+module-height = 335px
 header-height = 60px
-footer-height = 60px
+footer-height = 75px
 module-width = 400px
+grey-text = #969696
 
-::selection 
-  background: darker-blue-background
+#Fat .header
+  background-color: #4054B2
+
+#Protein .header
+    background-color: #FD704B
+
+#Sugar .header
+  background-color: #852269
+
+#Calories .header
+  background-color: #617D8A
+
+#SatFat .header
+  background-color: #4054B2
+
+#Water .header
+  background-color: #E62565
+
+#Sleep .header
+  background-color: #159588
 
 body
-  font-family: "Prometo"
-  text-transform: uppercase
-  background: RGB(25, 25, 25)
-  color: white
+  font-family: "Noto Sans"
+  background-color: rgba(236, 243, 246, 0.25)
+  color: black
   position: relative
   margin-left: 100px;
   margin-top: 35px;
-  
+
 .modules-container
   width: 2 * module-width + 100
   position: relative
-  margin: 0 auto;
-  
+  margin: 0 auto
+
 h1.name
-  display: block
-  margin: 0
-  padding: 0
-  color: white
-  font-size: 35px
-  font-family: "Prometo Light"
-  position: absolute
-  top: 175px
-  left: -245px
-  padding-left: 60px
-  border-bottom: 1px solid white
-  transform: rotate(270deg)
+  color: #3e3e3e
+  margin-bottom: 30px
+  margin-top: -20px
+  font-size: 27px
+
+h1.name, h2
+  display: inline-block
+  font-weight: normal
+
+h2
+  color: #818181
+  font-size: 17px
+  margin-left: 20px
 
 .module
-  width: module-width 
+  box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+  transition: all 0.3s cubic-bezier(.25,.8,.25,1);
+
+.module:hover
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+
+.module
+  border-radius: 2px
+  width: module-width
   height: module-height
   position: relative
   display: inline-block
   vertical-align: top
-  border: 2px solid #2EFEFF
-  text-transform: uppercase
   margin-right: 25px
   margin-bottom: 31px
-  
+  background: white
+  padding: 0
+
   .small-text
     font-size: 13px
-    color: ui-red
-  
-  .header, .footer 
-    background-color: light-background
-    
-  .header 
+
+  .header, .footer
+    color: black
+
+  .header
+    background-color: #2b98f0
     height: header-height
-    width: 100%
-    padding-top: 10px
-    border-bottom: 2px solid bright-blue
-      
+    padding-bottom: 20px
+    border-radius: 2px 2px 0px 0px
+    left-margin = 20px
+    color: white
     h1
+      padding-left: left-margin
+      padding-top: 13px
       font-size: 25px
       margin: 0
-      padding: 0
-      
-    h1, .small-text 
-      margin-left: 10px
 
-  .footer 
+    .small-text
+      text-transform: uppercase
+      font-size: 12px
+      padding-left: left-margin
+      margin-top: 0px
+      padding-top: 3px
+
+  .footer
     position: absolute
     width: 100%
-    text-transform: uppercase
-    bottom: 0; 
-    height: footer-height 
-    border-top: 2px solid bright-blue
+    bottom: 0;
+    height: footer-height
+    color: grey-text
+    font-size: 15px
+    border-top: .5px solid #b4b4b4
 
-    .left, .right 
+    .container
+      left-padding = 31px
+      width: (module-width * .33) - left-padding !important
       display: inline-block
-      
-    right-width = 150px
-    
-    .left
-      width: module-width - right-width
-      height: 100%
-      
-      .light-text
-        margin-top: 8px
-        margin-left: 13px 
-        font-size: 22px
-        color: light-text
-      
-      .footer-data
-        text-align: right
-        margin-top: 3px
-        position: absolute
-        right: right-width + 20
-        top: 5px
-        
-        .top-data
-          font-size: 20px
-          color: bright-blue
+      font-size: 20px
+      color: #464646
+      margin-top: 12px
+      padding-left: left-padding
+      .label
+        font-size: 14px
+        color: grey-text
 
-    .right
-      width: right-width
-      height: 100%
-      color: white
-      position: absolute
-      right: 0
-      top: 0
-      border-left: blue-border
-      
-      .data-container
-        margin-top: 10px
-        margin-left: 13px
-        font-size: 16px
-        color: white
-        width: 100%
-        line-height: 15px
-        .red-data
-          font-size: 18px
-          color: ui-red
-          display: inline-block
-          position: absolute
-          right: 20px
-          text-align: right
-          
 @media screen and (min-width: 3 * module-width + 200)
   .modules-container
     width: (module-width * 3) + 100px
-    
+
 switch-point = 200
-          
+
 @media screen and (max-width: 2 * module-width + switch-point)
   .modules-container
     width: module-width + 50px
 
 @media screen and (max-width: 2 * module-width + (switch-point - 1))
   h1.name
-    position: static
-    padding-left: 7px
-    padding-right: 35px
-    text-align: left
-    font-size: 35px
-    margin-left: 7%
-    margin-bottom: 30px
-    width: 40%
-    transform: none
-    display: block
+    margin-left: 30px
   body
     margin-left: 0px
   .modules-container
@@ -170,30 +149,25 @@ switch-point = 200
     display: block
     margin-left: auto
     margin-right: auto
-    .light-text
-      margin-top: 9px !important
-      font-size: 15px !important
-  .left
-    width: 65%
-  .right
-    width: 35%
 
-.chart 
-  height: module-height - header-height - footer-height - 20
+.chart
+  height: module-height - header-height - footer-height - 45
   margin: 0 auto
-  
+  margin-top: 7px
+  width: 95%
+
 .ct-line, .ct-point
-  stroke: bright-blue !important
-  
-.ct-line 
+  stroke: grey-text !important
+
+.ct-line
   stroke-width: 2px !important
-  
-.ct-point 
+
+.ct-point
   stroke-width: 7px !important
 
 .ct-label
-  color: rgba(255,255,255,.5) !important
-  
+  color: grey-text !important
+
 .ct-grids *
-  stroke: darker-blue-background !important
+  stroke: none !important
   stroke-dasharray: 0px !important
