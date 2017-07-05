@@ -35,7 +35,8 @@
       "Heart Rate": "bpm",
       "Mileage": "mi",
       "Water": "oz",
-      "Calories": "cal"
+      "Calories": "cal",
+      "Pace" : "/mi"
     }
 
     //returns the average of the array that is passed
@@ -219,6 +220,14 @@
             for (i in sheetData.Sleep) {
               if (i != 0 && sheetData.Sleep[i] != null && sheetData.Sleep[i] != 0) {
                 sheetData.Sleep[i] = Math.round(timeStringToFloat(sheetData.Sleep[i])*100) / 100;
+              }
+            }
+          }
+
+          if(sheetData.Pace) {
+            for (i in sheetData.Pace) {
+              if (i != 0 && sheetData.Pace[i] != null && sheetData.Pace[i] != 0) {
+                sheetData.Pace[i] = 60 * Math.round(timeStringToFloat(sheetData.Pace[i])*100) / 100;
               }
             }
           }
